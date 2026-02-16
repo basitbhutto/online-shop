@@ -1,0 +1,31 @@
+@model Domain.Entities.Order
+@{
+    ViewData["Title"] = "Order #" + Model.Id;
+}
+<div class="mb-4"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to Orders</a></div>
+<div class="card glass-card border-0 shadow-sm">
+    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Order #@Model.Id</h5>
+        <span class="badge bg-secondary">@Model.Status.ToString().Replace("_", " ")</span>
+    </div>
+    <div class="card-body">
+        <p><strong>Shipping:</strong> @Model.ShippingAddress, @Model.City</p>
+        <p><strong>Total:</strong> Rs @Model.TotalAmount.ToString("N0")</p>
+        <p><strong>Date:</strong> @Model.CreatedDate.ToString("yyyy-MM-dd HH:mm")</p>
+        <hr />
+        <h6>Items</h6>
+        <table class="table table-sm">
+            <thead><tr><th>Product</th><th>Qty</th><th>Price</th></tr></thead>
+            <tbody>
+                @foreach (var item in Model.OrderItems)
+                {
+                    <tr>
+                        <td>Product #@item.ProductId</td>
+                        <td>@item.Quantity</td>
+                        <td>Rs @(item.Price * item.Quantity)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

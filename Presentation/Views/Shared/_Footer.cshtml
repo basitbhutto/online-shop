@@ -1,0 +1,45 @@
+<footer class="shopwala-footer mt-5">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5 class="text-white mb-3">Shopwala</h5>
+                <p class="text-white-50">Your trusted online shopping destination in Karachi. Quality products, fast delivery.</p>
+            </div>
+            <div class="col-md-2 mb-4">
+                <h6 class="text-white mb-3">Quick Links</h6>
+                <ul class="list-unstyled">
+                    <li><a asp-controller="Shop" asp-action="Index" class="text-white-50 text-decoration-none">Shop</a></li>
+                    <li><a asp-controller="Home" asp-action="Privacy" class="text-white-50 text-decoration-none">Privacy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-2 mb-4">
+                <h6 class="text-white mb-3">Account</h6>
+                <ul class="list-unstyled">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        @if (User.IsInRole("Buyer"))
+                        {
+                            <li><a asp-area="Buyer" asp-controller="Orders" asp-action="Index" class="text-white-50 text-decoration-none">My Orders</a></li>
+                            <li><a asp-area="Buyer" asp-controller="Dashboard" asp-action="Index" class="text-white-50 text-decoration-none">My Account</a></li>
+                        }
+                        @if (User.IsInRole("SuperAdmin") || User.IsInRole("AdminStaff"))
+                        {
+                            <li><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="text-white-50 text-decoration-none">Admin</a></li>
+                        }
+                    }
+                    else
+                    {
+                        <li><a asp-controller="Account" asp-action="Login" class="text-white-50 text-decoration-none">Login</a></li>
+                        <li><a asp-controller="Account" asp-action="Register" class="text-white-50 text-decoration-none">Register</a></li>
+                    }
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h6 class="text-white mb-3">Delivery</h6>
+                <p class="text-white-50">We deliver across Karachi. Order now for same-day or next-day delivery.</p>
+            </div>
+        </div>
+        <hr class="border-secondary" />
+        <div class="text-center text-white-50 small">&copy; @DateTime.UtcNow.Year Shopwala - Karachi, Pakistan</div>
+    </div>
+</footer>

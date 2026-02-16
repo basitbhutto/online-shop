@@ -1,0 +1,150 @@
+@model Presentation.ViewModels.Shop.ShopIndexViewModel
+@{
+    ViewData["Title"] = Model.CategoryName ?? "Shop";
+    var title = Model.CategoryName ?? "All Products";
+    var subtitle = Model.TotalCount > 0 ? $"Connect with verified {Model.TotalCount} products" : "Discover our collection";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <aside class="col-lg-3 mb-4 mb-lg-0">
+            <div class="filter-sidebar sticky-top" style="top: 90px;">
+                <h5 class="mb-3 fw-bold">Filters</h5>
+                <form asp-action="Index" method="get" id="filterForm">
+                    <input type="hidden" name="search" value="@Model.SearchTerm" />
+                    <input type="hidden" name="page" value="1" />
+                    <div class="mb-4">
+                        <h6 class="mb-2">Category</h6>
+                        @foreach (var c in Model.Categories)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="categoryId" value="@c.Id" id="cat_@c.Id" @(Model.SelectedCategoryId == c.Id ? "checked" : "") onchange="document.getElementById('filterForm').submit()" />
+                                <label class="form-check-label" for="cat_@c.Id">@c.Name</label>
+                            </div>
+                        }
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="categoryId" value="" id="cat_all" @(!Model.SelectedCategoryId.HasValue ? "checked" : "") onchange="document.getElementById('filterForm').submit()" />
+                            <label class="form-check-label" for="cat_all">All Categories</label>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="mb-2">Price Range (PKR)</h6>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" name="minPrice" value="@Model.MinPrice" class="form-control form-control-sm" placeholder="Min" min="0" step="100" />
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="maxPrice" value="@Model.MaxPrice" class="form-control form-control-sm" placeholder="Max" min="0" step="100" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="mb-2">Location</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" checked disabled />
+                            <label class="form-check-label">Karachi, Pakistan</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-shopwala w-100 mb-2">Apply Filters</button>
+                    <a asp-action="Index" class="btn btn-link btn-sm text-muted w-100">Clear All</a>
+                </form>
+            </div>
+        </aside>
+        <div class="col-lg-9">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">Explore @title</h2>
+                    <p class="text-muted small mb-0">@subtitle</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                @foreach (var p in Model.Products)
+                {
+                    <div class="col-6 col-md-4 col-xl-3">
+                        <div class="card product-card h-100 border-0">
+                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block">
+                                <span class="badge badge-verified position-absolute top-0 start-0 m-2"><i class="bi bi-patch-check me-1"></i>Verified</span>
+                                <img src="@(p.MainImageUrl ?? "/images/placeholder.svg")" class="card-img-top product-card-img" alt="@p.Name" onerror="this.src='/images/placeholder.svg'"/>
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <button type="button" class="btn btn-sm wishlist-btn @(p.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@p.Id" data-in-wishlist="@p.IsInWishlist.ToString().ToLower()" title="Wishlist">
+                                        <i class="bi @(p.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-sm wishlist-btn btn-outline-danger" title="Login to add to Wishlist">
+                                        <i class="bi bi-heart"></i>
+                                    </a>
+                                }
+                            </a>
+                            <div class="card-body product-card-body">
+                                <h6 class="card-title">@p.Name</h6>
+                                <p class="small text-muted mb-2"><i class="bi bi-geo-alt me-1"></i>Karachi, Pakistan</p>
+                                <p class="mb-2">
+                                    @if (p.SalePrice > p.DisplayPrice)
+                                    {
+                                        <span class="product-price-old">Rs @p.SalePrice.ToString("N0")</span>
+                                        <span class="product-price ms-1">Rs @p.DisplayPrice.ToString("N0")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="product-price">Rs @p.DisplayPrice.ToString("N0")</span>
+                                    }
+                                    <span class="text-muted small">/ unit</span>
+                                </p>
+                                <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @if (!Model.Products.Any())
+            {
+                <div class="text-center py-5">
+                    <p class="text-muted">No products found. Try adjusting your filters.</p>
+                    <a asp-action="Index" class="btn btn-outline-primary">Clear Filters</a>
+                </div>
+            }
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="mt-4 d-flex justify-content-center">
+                    <ul class="pagination">
+                        @for (var i = 1; i <= Math.Min(Model.TotalPages, 10); i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-search="@Model.SearchTerm" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>
+
+<div style="display:none"><form>@Html.AntiForgeryToken()</form></div>
+
+@section Scripts {
+<script>
+$(function() {
+    $('.wishlist-btn').on('click', function(e) {
+        e.preventDefault();
+        var btn = $(this);
+        var productId = btn.data('product-id');
+        var inWishlist = btn.data('in-wishlist');
+        var method = inWishlist ? 'DELETE' : 'POST';
+        $.ajax({ url: '/api/wishlist/' + productId, method: method })
+            .done(function() {
+                btn.data('in-wishlist', inWishlist ? 'false' : 'true');
+                btn.toggleClass('btn-danger btn-outline-danger');
+                btn.find('i').toggleClass('bi-heart-fill bi-heart');
+                if (typeof updateWishlistCount === 'function') updateWishlistCount();
+            });
+    });
+});
+</script>
+}

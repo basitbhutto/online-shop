@@ -1,0 +1,137 @@
+@model Presentation.ViewModels.Shop.ProductDetailViewModel
+@{
+    ViewData["Title"] = Model.Name;
+    var displayPrice = Model.DiscountPrice ?? Model.SalePrice;
+}
+
+<div class="container py-4">
+    <div class="card glass-card border-0 shadow-sm overflow-hidden">
+        <div class="row g-0">
+            <div class="col-md-5 p-4 position-relative">
+                <div class="position-absolute top-0 end-0 m-3">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <button type="button" class="btn btn-sm wishlist-btn-detail @(Model.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@Model.Id" data-in-wishlist="@Model.IsInWishlist.ToString().ToLower()">
+                            <i class="bi @(Model.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
+                        </button>
+                    }
+                </div>
+                <div class="position-absolute top-0 start-0 m-3">
+                    <span class="badge badge-verified"><i class="bi bi-geo-alt me-1"></i></span>
+                </div>
+                <div id="productGallery" class="carousel slide mb-3" data-bs-ride="carousel">
+                    <div class="carousel-inner rounded-3 overflow-hidden">
+                        @for (var i = 0; i < (Model.ImageUrls?.Count ?? 0); i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="@Model.ImageUrls![i]" class="d-block w-100" style="aspect-ratio:1;object-fit:cover" alt="@Model.Name" onerror="this.src='/images/placeholder.svg'"/>
+                            </div>
+                        }
+                        @if (Model.ImageUrls == null || Model.ImageUrls.Count == 0)
+                        {
+                            <div class="carousel-item active">
+                                <img src="/images/placeholder.svg" class="d-block w-100" style="aspect-ratio:1;object-fit:cover" alt="@Model.Name"/>
+                            </div>
+                        }
+                    </div>
+                    @if (Model.ImageUrls != null && Model.ImageUrls.Count > 1)
+                    {
+                        <button class="carousel-control-prev" type="button" data-bs-target="#productGallery" data-bs-slide="prev"></button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#productGallery" data-bs-slide="next"></button>
+                    }
+                </div>
+                @if (Model.ImageUrls != null && Model.ImageUrls.Count > 1)
+                {
+                    <div class="d-flex gap-2 overflow-auto">
+                        @for (var i = 0; i < Model.ImageUrls.Count; i++)
+                        {
+                            <button type="button" class="flex-shrink-0 border rounded p-0 overflow-hidden @(i == 0 ? "border-primary border-2" : "border-secondary")" style="width:60px;height:60px" data-bs-target="#productGallery" data-bs-slide-to="@i">
+                                <img src="@Model.ImageUrls[i]" class="w-100 h-100 object-fit-cover" alt="" onerror="this.src='/images/placeholder.svg'" style="object-fit:cover"/>
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col-md-7 p-4">
+                <h1 class="h3 mb-2">@Model.Name</h1>
+                <p class="text-muted small mb-3">SKU: @Model.SKU</p>
+                <div class="d-flex gap-2 mb-3">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-shopwala">Add to Cart</button>
+                        </form>
+                        <a asp-controller="Shop" asp-action="BuyNow" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Buy Now</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-shopwala">Login to Add to Cart</a>
+                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("BuyNow", "Shop", new { id = Model.Id })" class="btn btn-outline-secondary">Buy Now</a>
+                    }
+                </div>
+                <p class="small text-muted mb-2"><i class="bi bi-truck me-1"></i>Shipping to: Karachi, Pakistan</p>
+                <p class="mb-3">
+                    <span class="product-price fs-4">Rs @displayPrice.ToString("N0")</span>
+                    @if (Model.DiscountPrice.HasValue)
+                    {
+                        <span class="product-price-old ms-2">Rs @Model.SalePrice.ToString("N0")</span>
+                        <span class="text-success small ms-1">(with membership discount)</span>
+                    }
+                </p>
+                @{
+                    var allSpecs = new List<(string Name, string Value)>();
+                    if (Model.Attributes?.Count > 0)
+                        allSpecs.AddRange(Model.Attributes.Select(a => (a.Name, a.Value)));
+                    if (Model.Specifications?.Count > 0)
+                        allSpecs.AddRange(Model.Specifications.Select(s => (s.Key, s.Value)));
+                }
+                @if (allSpecs.Any())
+                {
+                    <dl class="row small">
+                        @foreach (var spec in allSpecs)
+                        {
+                            <dt class="col-sm-4 text-muted">@spec.Name</dt>
+                            <dd class="col-sm-8">@spec.Value</dd>
+                        }
+                    </dl>
+                }
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="mt-3">
+                        <h6>Product Description</h6>
+                        <p class="small text-muted">@Model.Description</p>
+                    </div>
+                }
+                <div class="mt-3">
+                    <h6>Customer Reviews</h6>
+                    <div class="d-flex align-items-center gap-2 small">
+                        <span class="text-warning"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
+                        <span class="text-muted">5.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+$(function() {
+    $('.wishlist-btn-detail').on('click', function() {
+        var btn = $(this);
+        var productId = btn.data('product-id');
+        var inWishlist = btn.data('in-wishlist');
+        var method = inWishlist ? 'DELETE' : 'POST';
+        $.ajax({ url: '/api/wishlist/' + productId, method: method })
+            .done(function() {
+                btn.data('in-wishlist', inWishlist ? 'false' : 'true');
+                btn.toggleClass('btn-danger btn-outline-danger');
+                btn.find('i').toggleClass('bi-heart-fill bi-heart');
+                if (typeof updateWishlistCount === 'function') updateWishlistCount();
+            });
+    });
+});
+</script>
+}

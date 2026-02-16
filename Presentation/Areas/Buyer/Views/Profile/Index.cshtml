@@ -1,0 +1,12 @@
+@model Domain.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Profile";
+}
+<h1 class="mb-4"><i class="bi bi-person me-2"></i>Profile</h1>
+<div class="card glass-card border-0 shadow-sm" style="max-width:500px">
+    <div class="card-body">
+        <p><strong>Full Name:</strong> @(Model.FullName ?? "-")</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Member since:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd")</p>
+    </div>
+</div>

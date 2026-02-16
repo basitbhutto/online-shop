@@ -1,0 +1,194 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Project\\online-shop\\online-shop\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{42A0FDEF-FB41-449D-B01A-2E503804AE22}|Infrastructure\\Infrastructure.csproj|d:\\project\\online-shop\\online-shop\\infrastructure\\data\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{42A0FDEF-FB41-449D-B01A-2E503804AE22}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\data\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7F1E479A-3981-4CAC-AFD2-17C874EEAAB4}|Application\\Application.csproj|d:\\project\\online-shop\\online-shop\\application\\services\\dashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7F1E479A-3981-4CAC-AFD2-17C874EEAAB4}|Application\\Application.csproj|solutionrelative:application\\services\\dashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7F1E479A-3981-4CAC-AFD2-17C874EEAAB4}|Application\\Application.csproj|d:\\project\\online-shop\\online-shop\\application\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7F1E479A-3981-4CAC-AFD2-17C874EEAAB4}|Application\\Application.csproj|solutionrelative:application\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7F1E479A-3981-4CAC-AFD2-17C874EEAAB4}|Application\\Application.csproj|d:\\project\\online-shop\\online-shop\\application\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7F1E479A-3981-4CAC-AFD2-17C874EEAAB4}|Application\\Application.csproj|solutionrelative:application\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7F1E479A-3981-4CAC-AFD2-17C874EEAAB4}|Application\\Application.csproj|d:\\project\\online-shop\\online-shop\\application\\services\\activitylogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7F1E479A-3981-4CAC-AFD2-17C874EEAAB4}|Application\\Application.csproj|solutionrelative:application\\services\\activitylogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BCA1E7BE-8C06-4A97-B4AC-DC2349AABD88}|Presentation\\Presentation.csproj|d:\\project\\online-shop\\online-shop\\presentation\\controllers\\api\\cartapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCA1E7BE-8C06-4A97-B4AC-DC2349AABD88}|Presentation\\Presentation.csproj|solutionrelative:presentation\\controllers\\api\\cartapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BCA1E7BE-8C06-4A97-B4AC-DC2349AABD88}|Presentation\\Presentation.csproj|d:\\project\\online-shop\\online-shop\\presentation\\controllers\\api\\attributesapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCA1E7BE-8C06-4A97-B4AC-DC2349AABD88}|Presentation\\Presentation.csproj|solutionrelative:presentation\\controllers\\api\\attributesapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BCA1E7BE-8C06-4A97-B4AC-DC2349AABD88}|Presentation\\Presentation.csproj|d:\\project\\online-shop\\online-shop\\presentation\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCA1E7BE-8C06-4A97-B4AC-DC2349AABD88}|Presentation\\Presentation.csproj|solutionrelative:presentation\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4800B66-D3DD-4852-A7EC-F6C276C7B725}|Shared\\Shared.csproj|d:\\project\\online-shop\\online-shop\\shared\\constants\\rolenames.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4800B66-D3DD-4852-A7EC-F6C276C7B725}|Shared\\Shared.csproj|solutionrelative:shared\\constants\\rolenames.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4800B66-D3DD-4852-A7EC-F6C276C7B725}|Shared\\Shared.csproj|d:\\project\\online-shop\\online-shop\\shared\\dtos\\categoryattributedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4800B66-D3DD-4852-A7EC-F6C276C7B725}|Shared\\Shared.csproj|solutionrelative:shared\\dtos\\categoryattributedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SeedData.cs",
+              "DocumentMoniker": "D:\\Project\\online-shop\\online-shop\\Infrastructure\\Data\\SeedData.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Data\\SeedData.cs",
+              "ToolTip": "D:\\Project\\online-shop\\online-shop\\Infrastructure\\Data\\SeedData.cs",
+              "RelativeToolTip": "Infrastructure\\Data\\SeedData.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-16T15:43:48.119Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DashboardService.cs",
+              "DocumentMoniker": "D:\\Project\\online-shop\\online-shop\\Application\\Services\\DashboardService.cs",
+              "RelativeDocumentMoniker": "Application\\Services\\DashboardService.cs",
+              "ToolTip": "D:\\Project\\online-shop\\online-shop\\Application\\Services\\DashboardService.cs",
+              "RelativeToolTip": "Application\\Services\\DashboardService.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-16T15:34:05.742Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CategoryService.cs",
+              "DocumentMoniker": "D:\\Project\\online-shop\\online-shop\\Application\\Services\\CategoryService.cs",
+              "RelativeDocumentMoniker": "Application\\Services\\CategoryService.cs",
+              "ToolTip": "D:\\Project\\online-shop\\online-shop\\Application\\Services\\CategoryService.cs",
+              "RelativeToolTip": "Application\\Services\\CategoryService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-16T15:34:04.437Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CartService.cs",
+              "DocumentMoniker": "D:\\Project\\online-shop\\online-shop\\Application\\Services\\CartService.cs",
+              "RelativeDocumentMoniker": "Application\\Services\\CartService.cs",
+              "ToolTip": "D:\\Project\\online-shop\\online-shop\\Application\\Services\\CartService.cs",
+              "RelativeToolTip": "Application\\Services\\CartService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-16T15:34:02.874Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ActivityLogService.cs",
+              "DocumentMoniker": "D:\\Project\\online-shop\\online-shop\\Application\\Services\\ActivityLogService.cs",
+              "RelativeDocumentMoniker": "Application\\Services\\ActivityLogService.cs",
+              "ToolTip": "D:\\Project\\online-shop\\online-shop\\Application\\Services\\ActivityLogService.cs",
+              "RelativeToolTip": "Application\\Services\\ActivityLogService.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAqwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-16T15:33:57.831Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CartApiController.cs",
+              "DocumentMoniker": "D:\\Project\\online-shop\\online-shop\\Presentation\\Controllers\\Api\\CartApiController.cs",
+              "RelativeDocumentMoniker": "Presentation\\Controllers\\Api\\CartApiController.cs",
+              "ToolTip": "D:\\Project\\online-shop\\online-shop\\Presentation\\Controllers\\Api\\CartApiController.cs",
+              "RelativeToolTip": "Presentation\\Controllers\\Api\\CartApiController.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-16T15:32:32.446Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AttributesApiController.cs",
+              "DocumentMoniker": "D:\\Project\\online-shop\\online-shop\\Presentation\\Controllers\\Api\\AttributesApiController.cs",
+              "RelativeDocumentMoniker": "Presentation\\Controllers\\Api\\AttributesApiController.cs",
+              "ToolTip": "D:\\Project\\online-shop\\online-shop\\Presentation\\Controllers\\Api\\AttributesApiController.cs",
+              "RelativeToolTip": "Presentation\\Controllers\\Api\\AttributesApiController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-16T15:32:24.15Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "D:\\Project\\online-shop\\online-shop\\Presentation\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "Presentation\\Controllers\\AccountController.cs",
+              "ToolTip": "D:\\Project\\online-shop\\online-shop\\Presentation\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "Presentation\\Controllers\\AccountController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-16T15:32:16.462Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "RoleNames.cs",
+              "DocumentMoniker": "D:\\Project\\online-shop\\online-shop\\Shared\\Constants\\RoleNames.cs",
+              "RelativeDocumentMoniker": "Shared\\Constants\\RoleNames.cs",
+              "ToolTip": "D:\\Project\\online-shop\\online-shop\\Shared\\Constants\\RoleNames.cs",
+              "RelativeToolTip": "Shared\\Constants\\RoleNames.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-16T15:31:55.047Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "CategoryAttributeDto.cs",
+              "DocumentMoniker": "D:\\Project\\online-shop\\online-shop\\Shared\\DTOs\\CategoryAttributeDto.cs",
+              "RelativeDocumentMoniker": "Shared\\DTOs\\CategoryAttributeDto.cs",
+              "ToolTip": "D:\\Project\\online-shop\\online-shop\\Shared\\DTOs\\CategoryAttributeDto.cs",
+              "RelativeToolTip": "Shared\\DTOs\\CategoryAttributeDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-16T15:31:50.423Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

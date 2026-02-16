@@ -1,0 +1,8 @@
+@model IEnumerable<Presentation.ViewModels.Shop.CategoryViewModel>
+@if (Model != null)
+{
+    @foreach (var cat in Model)
+    {
+        <li><a class="dropdown-item" asp-controller="Shop" asp-action="Category" asp-route-slug="@cat.Slug">@cat.Name</a></li>
+    }
+}

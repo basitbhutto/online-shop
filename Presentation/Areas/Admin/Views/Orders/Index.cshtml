@@ -1,0 +1,48 @@
+@model IEnumerable<Domain.Entities.Order>
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h1 class="mb-4">Orders</h1>
+<div class="mb-3">
+    <form method="get" class="d-inline">
+        <select name="status" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            <option value="PendingConfirmation" selected="@(Context.Request.Query["status"] == "PendingConfirmation")">Pending Confirmation</option>
+            <option value="AdminReview" selected="@(Context.Request.Query["status"] == "AdminReview")">Admin Review</option>
+            <option value="Confirmed" selected="@(Context.Request.Query["status"] == "Confirmed")">Confirmed</option>
+            <option value="Preparing" selected="@(Context.Request.Query["status"] == "Preparing")">Preparing</option>
+            <option value="Shipped" selected="@(Context.Request.Query["status"] == "Shipped")">Shipped</option>
+            <option value="OutForDelivery" selected="@(Context.Request.Query["status"] == "OutForDelivery")">Out for Delivery</option>
+            <option value="Delivered" selected="@(Context.Request.Query["status"] == "Delivered")">Delivered</option>
+            <option value="Cancelled" selected="@(Context.Request.Query["status"] == "Cancelled")">Cancelled</option>
+        </select>
+    </form>
+</div>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var o in Model ?? Enumerable.Empty<Domain.Entities.Order>())
+            {
+                <tr>
+                    <td>@o.Id</td>
+                    <td>@o.User?.Email</td>
+                    <td>@o.CreatedDate.ToString("dd MMM yyyy HH:mm")</td>
+                    <td><span class="badge @(o.Status == Domain.Enums.OrderStatus.Delivered ? "bg-success" : o.Status == Domain.Enums.OrderStatus.Cancelled ? "bg-danger" : o.Status == Domain.Enums.OrderStatus.Shipped || o.Status == Domain.Enums.OrderStatus.OutForDelivery ? "bg-info" : "bg-secondary")">@o.Status.ToString().Replace("_", " ")</span></td>
+                    <td>Rs @o.TotalAmount.ToString("N0")</td>
+                    <td><a asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-primary">View</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

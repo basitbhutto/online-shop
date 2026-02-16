@@ -1,0 +1,147 @@
+@model Domain.Entities.Order
+@{
+    ViewData["Title"] = "Order #" + Model.Id;
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+<h1 class="mb-4">Order #@Model.Id</h1>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">Items</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var item in Model.OrderItems)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@item.Product.Name @(item.Variant != null ? $"({item.Variant.VariantCombination})" : "") x @item.Quantity</span>
+                        <span>Rs @((item.Quantity * item.Price).ToString("N0"))</span>
+                    </li>
+                }
+            </ul>
+        </div>
+        @if (Model.StatusHistory?.Any() == true)
+        {
+            <div class="card mb-4">
+                <div class="card-header">Status History</div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var h in Model.StatusHistory.OrderByDescending(x => x.ChangedDate))
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>@(((Domain.Enums.OrderStatus)h.Status).ToString().Replace("_", " ")) @(!string.IsNullOrEmpty(h.Notes) ? $"– {h.Notes}" : "")</span>
+                            <small class="text-muted">@h.ChangedDate.ToString("dd MMM HH:mm")</small>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+        <div class="card mb-4">
+            <div class="card-header">Update Status</div>
+            <div class="card-body">
+                <form asp-action="UpdateStatus" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <select name="status" class="form-select">
+                                @foreach (var s in Enum.GetValues<Domain.Enums.OrderStatus>())
+                                {
+                                    <option value="@s" selected="@(Model.Status == s)">@s.ToString().Replace("_", " ")</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input name="notes" class="form-control" placeholder="Notes" />
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">Shipping</div>
+            <div class="card-body">
+                <p>@Model.ShippingAddress</p>
+                <p>@Model.City</p>
+                @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                {
+                    <p><i class="bi bi-telephone me-1"></i>@Model.PhoneNumber</p>
+                }
+                <p><i class="bi bi-cash-stack text-success me-1"></i>Cash on Delivery</p>
+                @if (!string.IsNullOrEmpty(Model.PreferredDeliveryTime))
+                {
+                    <p><i class="bi bi-clock me-1"></i>Delivery time: @Model.PreferredDeliveryTime</p>
+                }
+                <p class="mb-0">Customer: @Model.User?.Email</p>
+            </div>
+        </div>
+        @if (Model.Status != Domain.Enums.OrderStatus.Cancelled && Model.Status != Domain.Enums.OrderStatus.Delivered)
+        {
+            <div class="card mb-4">
+                <div class="card-header">Delivery Time / Cancel</div>
+                <div class="card-body">
+                    <form asp-action="UpdateDeliveryTime" method="post" class="mb-3">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <div class="input-group">
+                            <select name="preferredDeliveryTime" class="form-select">
+                                <option value="">Set delivery time</option>
+                                <option value="Morning 9 AM - 12 PM" selected="@(Model.PreferredDeliveryTime == "Morning 9 AM - 12 PM")">Morning 9 AM - 12 PM</option>
+                                <option value="Afternoon 12 PM - 5 PM" selected="@(Model.PreferredDeliveryTime == "Afternoon 12 PM - 5 PM")">Afternoon 12 PM - 5 PM</option>
+                                <option value="Evening 5 PM - 9 PM" selected="@(Model.PreferredDeliveryTime == "Evening 5 PM - 9 PM")">Evening 5 PM - 9 PM</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                    <form asp-action="CancelOrder" method="post" onsubmit="return confirm('Cancel this order?');">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input name="notes" class="form-control mb-2" placeholder="Reason (optional)" />
+                        <button type="submit" class="btn btn-danger w-100">Cancel Order</button>
+                    </form>
+                </div>
+            </div>
+        }
+        <div class="card mb-4">
+            <div class="card-header">Assign Delivery</div>
+            <div class="card-body">
+                <form asp-action="AssignDelivery" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="mb-2">
+                        <input name="deliveryBoyName" class="form-control" placeholder="Delivery Boy Name" required />
+                    </div>
+                    <div class="mb-2">
+                        <input name="phoneNumber" class="form-control" placeholder="Phone" required />
+                    </div>
+                    <div class="mb-2">
+                        <input name="vehicleType" class="form-control" placeholder="Vehicle Type" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Assign</button>
+                </form>
+            </div>
+        </div>
+        @if (Model.DeliveryAssignment != null)
+        {
+            <div class="card">
+                <div class="card-header">Delivery Info</div>
+                <div class="card-body">
+                    <p>@Model.DeliveryAssignment.DeliveryBoyName - @Model.DeliveryAssignment.PhoneNumber</p>
+                    <p>@Model.DeliveryAssignment.VehicleType</p>
+                    @if (Model.Status != Domain.Enums.OrderStatus.Delivered)
+                    {
+                        <form asp-action="MarkDelivered" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <button type="submit" class="btn btn-success w-100">Mark Delivered</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

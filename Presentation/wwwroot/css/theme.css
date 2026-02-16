@@ -1,0 +1,211 @@
+/* Shopwala - Glassmorphism Theme */
+:root {
+  --shopwala-primary: #e85d04;
+  --shopwala-primary-dark: #d45503;
+  --shopwala-secondary: #f48c06;
+  --shopwala-dark: #212529;
+  --shopwala-gray: #6c757d;
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff5eb 50%, #f8f9fa 100%);
+  background-attachment: fixed;
+}
+
+main { flex: 1; }
+
+/* Glassmorphism */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+}
+
+.glass-dark {
+  background: rgba(33, 37, 41, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Navbar */
+.shopwala-navbar {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+}
+
+.shopwala-navbar .navbar-brand { color: var(--shopwala-dark) !important; }
+.shopwala-navbar .nav-link { color: var(--shopwala-dark) !important; opacity: 0.9; }
+.shopwala-navbar .nav-link:hover { color: var(--shopwala-primary) !important; opacity: 1; }
+.navbar-logo { height: 36px; max-width: 120px; object-fit: contain; }
+.shopwala-brand { font-weight: 700; font-size: 1.25rem; color: var(--shopwala-primary) !important; }
+
+/* Search */
+.nav-search {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 50px;
+  padding: 0.5rem 1.25rem;
+  max-width: 400px;
+}
+
+/* Buttons */
+.btn-shopwala {
+  background: linear-gradient(135deg, var(--shopwala-primary), var(--shopwala-secondary));
+  border: none;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 0.5rem 1.5rem;
+  box-shadow: 0 4px 15px rgba(232, 93, 4, 0.35);
+}
+
+.btn-shopwala:hover {
+  background: linear-gradient(135deg, var(--shopwala-primary-dark), var(--shopwala-primary));
+  color: #fff !important;
+  box-shadow: 0 6px 20px rgba(232, 93, 4, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Product Cards - Glassmorphism */
+.product-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+  height: 100%;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+
+.product-card-img {
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: #f8f9fa;
+}
+
+.product-card-body { padding: 1.25rem; }
+.product-price { font-weight: 700; color: var(--shopwala-primary); font-size: 1.1rem; }
+.product-price-old { text-decoration: line-through; color: var(--shopwala-gray); font-size: 0.9rem; }
+.wishlist-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+}
+.wishlist-btn.btn-outline-danger { border: 2px solid var(--shopwala-primary); color: var(--shopwala-primary); }
+.wishlist-btn.btn-outline-danger:hover { background: rgba(232,93,4,0.2); }
+.wishlist-btn.btn-danger { background: var(--shopwala-primary); border: none; color: #fff; }
+
+/* Category tiles */
+.category-tile {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: all 0.3s;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-tile:hover, .category-tile.active {
+  background: linear-gradient(135deg, var(--shopwala-primary), var(--shopwala-secondary));
+  color: #fff;
+  border-color: transparent;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(232,93,4,0.35);
+}
+
+/* Filter sidebar */
+.filter-sidebar {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--glass-shadow);
+}
+
+/* Modal / Auth cards */
+.auth-modal {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+  padding: 2.5rem;
+}
+
+/* OTP inputs */
+.otp-input {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border: 2px solid #dee2e6;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.otp-input:focus {
+  border-color: var(--shopwala-primary);
+  box-shadow: 0 0 0 4px rgba(232,93,4,0.2);
+  outline: none;
+}
+
+.cart-count-badge { font-size: 0.7rem; }
+.shopwala-footer { background: var(--glass-dark, #212529); color: #fff; }
+.form-control:focus, .form-select:focus {
+  border-color: var(--shopwala-primary);
+  box-shadow: 0 0 0 0.2rem rgba(232,93,4,0.25);
+}
+
+/* Verified badge */
+.badge-verified {
+  background: linear-gradient(135deg, var(--shopwala-primary), var(--shopwala-secondary));
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 50px;
+}

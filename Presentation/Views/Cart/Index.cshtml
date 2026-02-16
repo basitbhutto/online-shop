@@ -1,0 +1,69 @@
+@model IEnumerable<Presentation.ViewModels.Cart.CartItemViewModel>
+@{
+    ViewData["Title"] = "Cart";
+    var total = Model?.Sum(i => i.Quantity * i.Price) ?? 0;
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Shopping Cart</h1>
+    @if (Model == null || !Model.Any())
+    {
+        <p class="text-muted">Your cart is empty.</p>
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-shopwala">Continue Shopping</a>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="@(item.ImageUrl ?? "/images/placeholder.svg")" alt="@item.ProductName" class="me-2" style="width:60px;height:60px;object-fit:cover" onerror="this.src='/images/placeholder.svg'"/>
+                                    <div>
+                                        <a asp-controller="Shop" asp-action="Details" asp-route-id="@item.ProductId">@item.ProductName</a>
+                                        @if (!string.IsNullOrEmpty(item.VariantCombination))
+                                        { <small class="d-block text-muted">@item.VariantCombination</small> }
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Rs @item.Price.ToString("N0")</td>
+                            <td>
+                                <form asp-action="UpdateQuantity" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control form-control-sm d-inline-block" style="width:70px" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary ms-1">Update</button>
+                                </form>
+                            </td>
+                            <td>Rs @((item.Quantity * item.Price).ToString("N0"))</td>
+                            <td>
+                                <form asp-action="Remove" method="post" class="d-inline" onsubmit="return confirm('Remove from cart?')">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-outline-secondary">Continue Shopping</a>
+            <div>
+                <strong>Total: Rs @total.ToString("N0")</strong>
+                <a asp-controller="Checkout" asp-action="Index" class="btn btn-shopwala ms-3">Proceed to Checkout</a>
+            </div>
+        </div>
+    }
+</div>

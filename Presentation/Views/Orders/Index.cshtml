@@ -1,0 +1,41 @@
+@model IEnumerable<Domain.Entities.Order>
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">My Orders</h1>
+    @if (Model == null || !Model.Any())
+    {
+        <p class="text-muted">You have no orders yet.</p>
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-shopwala">Start Shopping</a>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>@order.Id</td>
+                            <td>@order.CreatedDate.ToString("dd MMM yyyy")</td>
+                            <td><span class="badge @(order.Status == Domain.Enums.OrderStatus.Delivered ? "bg-success" : order.Status == Domain.Enums.OrderStatus.Cancelled ? "bg-danger" : order.Status == Domain.Enums.OrderStatus.Shipped || order.Status == Domain.Enums.OrderStatus.OutForDelivery ? "bg-info" : "bg-secondary")">@order.Status.ToString().Replace("_", " ")</span></td>
+                            <td>Rs @order.TotalAmount.ToString("N0")</td>
+                            <td><a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">View</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

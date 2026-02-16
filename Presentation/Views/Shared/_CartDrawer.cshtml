@@ -1,0 +1,17 @@
+@if (User.Identity?.IsAuthenticated == true)
+{
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartDrawer">
+    <div class="offcanvas-header bg-dark text-white">
+        <h5 class="offcanvas-title">Your Cart</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <div id="cartDrawerContent" class="p-3">
+            <p class="text-muted text-center">Loading cart...</p>
+        </div>
+        <div class="p-3 border-top">
+            <a asp-controller="Cart" asp-action="Index" class="btn btn-primary w-100">View Cart & Checkout</a>
+        </div>
+    </div>
+</div>
+}

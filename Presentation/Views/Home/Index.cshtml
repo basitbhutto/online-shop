@@ -1,0 +1,120 @@
+@model Presentation.ViewModels.Home.HomeIndexViewModel
+@{
+    ViewData["Title"] = "Home";
+    var categories = Model?.Categories ?? new List<Presentation.ViewModels.Home.CategoryItem>();
+    var products = Model?.Products ?? new List<Presentation.ViewModels.Home.ProductCardItem>();
+}
+
+<section class="py-4">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-3">Welcome to Shopwala</h1>
+        <p class="lead mb-4">Your trusted online store in Karachi. Quality products, fast delivery.</p>
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-shopwala btn-lg">Shop Now</a>
+    </div>
+</section>
+
+@if (categories.Any())
+{
+    <section class="py-3">
+        <div class="container">
+            <h5 class="mb-3 fw-bold">All Categories</h5>
+            <div class="d-flex gap-3 overflow-auto pb-2" style="scrollbar-width: thin;">
+                <a asp-controller="Shop" asp-action="Index" class="category-tile text-decoration-none text-dark flex-shrink-0" style="min-width: 120px;">
+                    <i class="bi bi-grid-3x3-gap fs-4 mb-2"></i>
+                    <span class="small fw-medium">All Categories</span>
+                </a>
+                @foreach (var c in categories)
+                {
+                    <a asp-controller="Shop" asp-action="Category" asp-route-slug="@c.Slug" class="category-tile text-decoration-none text-dark flex-shrink-0" style="min-width: 120px;">
+                        <i class="bi bi-tag fs-4 mb-2"></i>
+                        <span class="small fw-medium">@c.Name</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<section class="py-4">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">All Products</h2>
+                <p class="text-muted small mb-0">@products.Count products from all categories</p>
+            </div>
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-shopwala btn-sm">View All</a>
+        </div>
+        <div class="row g-4">
+            @foreach (var p in products)
+            {
+                <div class="col-6 col-md-4 col-xl-3">
+                    <div class="card product-card h-100 border-0">
+                        <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block">
+                            <span class="badge badge-verified position-absolute top-0 start-0 m-2"><i class="bi bi-patch-check me-1"></i>Verified</span>
+                            <img src="@(p.MainImageUrl ?? "/images/placeholder.svg")" class="card-img-top product-card-img" alt="@p.Name" onerror="this.src='/images/placeholder.svg'"/>
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <button type="button" class="btn btn-sm wishlist-btn @(p.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@p.Id" data-in-wishlist="@p.IsInWishlist.ToString().ToLower()" title="Wishlist">
+                                    <i class="bi @(p.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-sm wishlist-btn btn-outline-danger position-absolute top-0 end-0 m-2" title="Login to add to Wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </a>
+                            }
+                        </a>
+                        <div class="card-body product-card-body">
+                            <h6 class="card-title">@p.Name</h6>
+                            <p class="small text-muted mb-2"><i class="bi bi-geo-alt me-1"></i>Karachi, Pakistan</p>
+                            <p class="mb-2">
+                                @if (p.SalePrice > p.DisplayPrice)
+                                {
+                                    <span class="product-price-old">Rs @p.SalePrice.ToString("N0")</span>
+                                    <span class="product-price ms-1">Rs @p.DisplayPrice.ToString("N0")</span>
+                                }
+                                else
+                                {
+                                    <span class="product-price">Rs @p.DisplayPrice.ToString("N0")</span>
+                                }
+                                <span class="text-muted small">/ unit</span>
+                            </p>
+                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100">Add to Cart</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (!products.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <p>No products yet. Add categories and products from Admin.</p>
+                <a asp-controller="Shop" asp-action="Index" class="btn btn-outline-primary">Browse Shop</a>
+            </div>
+        }
+    </div>
+</section>
+
+<div style="display:none"><form>@Html.AntiForgeryToken()</form></div>
+
+@section Scripts {
+<script>
+$(function() {
+    $('.wishlist-btn').on('click', function(e) {
+        e.preventDefault();
+        var btn = $(this);
+        var productId = btn.data('product-id');
+        var inWishlist = btn.data('in-wishlist') === 'true';
+        var method = inWishlist ? 'DELETE' : 'POST';
+        $.ajax({ url: '/api/wishlist/' + productId, method: method })
+            .done(function() {
+                btn.data('in-wishlist', (inWishlist === 'true' ? 'false' : 'true'));
+                btn.toggleClass('btn-danger btn-outline-danger');
+                btn.find('i').toggleClass('bi-heart-fill bi-heart');
+                if (typeof updateWishlistCount === 'function') updateWishlistCount();
+            });
+    });
+});
+</script>
+}

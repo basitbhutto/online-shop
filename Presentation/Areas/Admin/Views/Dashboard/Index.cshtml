@@ -1,0 +1,89 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    var errorMsg = ViewBag.Error as string;
+    var stats = ViewBag.Stats as Application.Services.DashboardStatsDto;
+    var monthlySales = ViewBag.MonthlySales as IReadOnlyList<Application.Services.MonthlySalesDto>;
+    var productCount = ViewBag.ProductCount as int? ?? 0;
+    var userCount = ViewBag.UserCount as int? ?? 0;
+}
+
+<h1 class="mb-4"><i class="bi bi-grid me-2"></i>Dashboard</h1>
+@if (!string.IsNullOrEmpty(errorMsg))
+{
+    <div class="alert alert-warning">@errorMsg</div>
+}
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card glass-card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Total Orders</h6>
+                <h3 class="mb-0">@(stats?.TotalOrders ?? 0)</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card glass-card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Total Revenue</h6>
+                <h3 class="mb-0 text-primary">Rs @((stats?.TotalRevenue ?? 0).ToString("N0"))</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card glass-card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Products</h6>
+                <h3 class="mb-0">@productCount</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card glass-card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Users</h6>
+                <h3 class="mb-0">@userCount</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card glass-card border-0 shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Net Profit</h6>
+                <h3 class="text-success mb-0">Rs @((stats?.NetProfit ?? 0).ToString("N0"))</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card glass-card border-0 shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-2">Purchase Cost</h6>
+                <h3 class="mb-0">Rs @((stats?.TotalPurchaseCost ?? 0).ToString("N0"))</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card glass-card border-0 shadow-sm">
+    <div class="card-header bg-transparent border-0 pt-4 px-4"><h5 class="mb-0">Monthly Sales</h5></div>
+    <div class="card-body">
+        <canvas id="monthlySalesChart" height="80"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+const ctx = document.getElementById('monthlySalesChart');
+if (ctx) {
+    const data = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(monthlySales ?? new List<Application.Services.MonthlySalesDto>()));
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.map(d => ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.month-1]),
+            datasets: [{ label: 'Revenue (Rs)', data: data.map(d => d.revenue), backgroundColor: 'rgba(232, 93, 4, 0.7)' }]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+    });
+}
+</script>
+}

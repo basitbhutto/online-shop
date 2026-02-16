@@ -1,0 +1,45 @@
+@model Presentation.ViewModels.Account.RegisterViewModel
+@{
+    ViewData["Title"] = "Create Account";
+    Layout = "_Layout";
+}
+
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-5">
+    <div class="auth-modal col-11 col-md-5 col-lg-4">
+        <div class="text-center mb-4">
+            <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                <span class="shopwala-brand fs-3">Shopwala</span>
+            </a>
+            <h2 class="fw-bold mt-3 mb-1">Create Your Account</h2>
+            <p class="text-muted small">Join Shopwala for exclusive deals!</p>
+        </div>
+        <form asp-action="Register" method="post">
+            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+            <div class="mb-3">
+                <input asp-for="FullName" class="form-control form-control-lg rounded-3" placeholder="Full Name | e.g. Ali Hassan" />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <input asp-for="Email" class="form-control form-control-lg rounded-3" placeholder="Email Address | user@example.com" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <input asp-for="Password" class="form-control form-control-lg rounded-3" placeholder="Password ••••" />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <input asp-for="ConfirmPassword" class="form-control form-control-lg rounded-3" placeholder="Confirm Password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+            </div>
+            <button type="submit" class="btn btn-shopwala btn-lg w-100 py-3 rounded-3 mb-3">Create Account</button>
+            <div class="mb-3 form-check">
+                <input asp-for="AgreeToTerms" class="form-check-input" style="accent-color: var(--shopwala-primary)" />
+                <label asp-for="AgreeToTerms" class="form-check-label small">I agree to <a href="#">Terms</a> & <a href="#">Privacy Policy</a></label>
+                <span asp-validation-for="AgreeToTerms" class="text-danger small d-block"></span>
+            </div>
+        </form>
+        <p class="text-center mb-0 small">Already have an account? <a asp-action="Login" class="text-primary fw-semibold">Log In</a></p>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,104 @@
+@model Domain.Entities.Order
+@{
+    ViewData["Title"] = "Order #" + Model.Id;
+    var statusDisplay = Model.Status.ToString().Replace("_", " ");
+    var statusBadgeClass = Model.Status == Domain.Enums.OrderStatus.Delivered ? "bg-success" 
+        : Model.Status == Domain.Enums.OrderStatus.Cancelled ? "bg-danger" 
+        : Model.Status == Domain.Enums.OrderStatus.Shipped || Model.Status == Domain.Enums.OrderStatus.OutForDelivery ? "bg-info" 
+        : "bg-secondary";
+}
+
+<div class="container py-4">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    <h1 class="mb-4">Order #@Model.Id</h1>
+    <p class="mb-4">
+        <span class="badge @statusBadgeClass">@statusDisplay</span>
+        <span class="text-muted ms-2">Placed on @Model.CreatedDate.ToString("dd MMM yyyy HH:mm")</span>
+        @{
+            var canCancel = Model.Status == Domain.Enums.OrderStatus.PendingConfirmation || Model.Status == Domain.Enums.OrderStatus.AdminReview || Model.Status == Domain.Enums.OrderStatus.Confirmed || Model.Status == Domain.Enums.OrderStatus.Preparing;
+        }
+        @if (canCancel)
+        {
+            <form asp-action="Cancel" method="post" class="d-inline ms-2" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-outline-danger btn-sm">Cancel Order</button>
+            </form>
+        }
+    </p>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">Items</div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>@item.Product.Name @(item.Variant != null ? $"({item.Variant.VariantCombination})" : "") x @item.Quantity</span>
+                            <span>Rs @((item.Quantity * item.Price).ToString("N0"))</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @if (Model.StatusHistory?.Any() == true)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">Track Status</div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            @foreach (var h in Model.StatusHistory.OrderByDescending(x => x.ChangedDate).Take(8))
+                            {
+                                <li class="d-flex align-items-start mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                    <div>
+                                        <span class="fw-medium">@(((Domain.Enums.OrderStatus)h.Status).ToString().Replace("_", " "))</span>
+                                        <br /><small class="text-muted">@h.ChangedDate.ToString("dd MMM yyyy HH:mm")</small>
+                                        @if (!string.IsNullOrEmpty(h.Notes))
+                                        {
+                                            <br /><small>@h.Notes</small>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            <div class="card mb-4">
+                <div class="card-header">Shipping</div>
+                <div class="card-body">
+                    <p class="mb-0">@Model.ShippingAddress</p>
+                    <p class="mb-0">@Model.City</p>
+                    <p class="mb-0"><i class="bi bi-cash-stack text-success me-1"></i>Cash on Delivery</p>
+                    @if (!string.IsNullOrEmpty(Model.PreferredDeliveryTime))
+                    {
+                        <p class="mb-0"><i class="bi bi-clock me-1"></i>@Model.PreferredDeliveryTime</p>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                    {
+                        <p class="mb-0"><i class="bi bi-telephone me-1"></i>@Model.PhoneNumber</p>
+                    }
+                </div>
+            </div>
+            @if (Model.DeliveryAssignment != null)
+            {
+                <div class="card">
+                    <div class="card-header">Delivery Info</div>
+                    <div class="card-body">
+                        <p><strong>@Model.DeliveryAssignment.DeliveryBoyName</strong></p>
+                        <p class="mb-0">@Model.DeliveryAssignment.PhoneNumber</p>
+                        <p class="mb-0">@Model.DeliveryAssignment.VehicleType</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <p class="fw-bold">Total: Rs @Model.TotalAmount.ToString("N0")</p>
+</div>
