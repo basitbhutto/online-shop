@@ -42,6 +42,101 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Presentation.Controllers.Api.ProductChatApiController",
+    "Method": "GetOrCreateThread",
+    "RelativePath": "api/chat/thread/{productId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.Api.ProductChatApiController",
+    "Method": "GetMessages",
+    "RelativePath": "api/chat/thread/{threadId}/messages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "threadId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.Api.ProductChatApiController",
+    "Method": "MarkAsRead",
+    "RelativePath": "api/chat/thread/{threadId}/read",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "threadId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.Api.ProductChatApiController",
+    "Method": "SendMessage",
+    "RelativePath": "api/chat/thread/{threadId}/send",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "threadId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "req",
+        "Type": "Presentation.Controllers.Api.SendMessageRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.Api.ProductChatApiController",
+    "Method": "UnreadCount",
+    "RelativePath": "api/chat/unread-count",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.Api.ShopApiController",
+    "Method": "GetProductsBulk",
+    "RelativePath": "api/shop/products/bulk",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ids",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Presentation.Controllers.Api.WishlistController",
     "Method": "Add",
     "RelativePath": "api/Wishlist/{productId}",
@@ -81,6 +176,22 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Controllers.Api.WishlistController",
+    "Method": "Sync",
+    "RelativePath": "api/Wishlist/sync",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "Presentation.Controllers.Api.SyncWishlistRequest",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   }
 ]

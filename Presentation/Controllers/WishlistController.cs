@@ -5,7 +5,6 @@ using Presentation.ViewModels.Shop;
 
 namespace Presentation.Controllers;
 
-[Authorize]
 public class WishlistController : Controller
 {
     private readonly IWishlistService _wishlistService;
@@ -15,8 +14,12 @@ public class WishlistController : Controller
         _wishlistService = wishlistService;
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> Index(CancellationToken ct = default)
     {
+        if (User.Identity?.IsAuthenticated != true)
+            return View("GuestWishlist");
+
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (userId == null) return RedirectToAction("Login", "Account");
 

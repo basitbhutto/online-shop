@@ -37,7 +37,7 @@ window.updateWishlistCount = function () {
         .catch(function () {
             var g = getGuestWishlist();
             badge.textContent = g.length;
-            badge.classList.toggle('d-none', g.length === 0);
+            badge.style.display = g.length > 0 ? '' : 'none';
         });
 };
 

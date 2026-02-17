@@ -1,0 +1,82 @@
+@{
+    ViewData["Title"] = "My Wishlist";
+}
+<div class="container py-4">
+    <h1 class="mb-4"><i class="bi bi-heart me-2"></i>My Wishlist</h1>
+    <div id="guestWishlistContainer">
+        <div id="guestWishlistLoading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Loading your wishlist...</p>
+        </div>
+        <div id="guestWishlistEmpty" class="text-center py-5 d-none">
+            <i class="bi bi-heart display-4 text-muted"></i>
+            <p class="mt-3 text-muted">Your wishlist is empty.</p>
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-shopwala">Browse Products</a>
+        </div>
+        <div id="guestWishlistGrid" class="row g-4 d-none"></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+$(function() {
+    var ids = typeof getGuestWishlist === 'function' ? getGuestWishlist() : [];
+    if (ids.length === 0) {
+        $('#guestWishlistLoading').addClass('d-none');
+        $('#guestWishlistEmpty').removeClass('d-none');
+        return;
+    }
+    var idsParam = ids.slice(0, 50).join(',');
+    fetch('/api/shop/products/bulk?ids=' + encodeURIComponent(idsParam), { credentials: 'include' })
+        .then(function(r) { return r.json(); })
+        .then(function(products) {
+            $('#guestWishlistLoading').addClass('d-none');
+            if (!products || products.length === 0) {
+                $('#guestWishlistEmpty').removeClass('d-none');
+                return;
+            }
+            var html = '';
+            products.forEach(function(p) {
+                var price = p.displayPrice || p.salePrice || 0;
+                var img = p.mainImageUrl || '/images/placeholder.svg';
+                html += '<div class="col-12 col-sm-6 col-md-4 col-xl-3 guest-wishlist-card" data-product-id="' + p.id + '">' +
+                    '<div class="card product-card h-100 border-0">' +
+                    '<a href="/Shop/Details/' + p.id + '" class="position-relative d-block">' +
+                    '<span class="badge badge-verified position-absolute top-0 start-0 m-2"><i class="bi bi-patch-check me-1"></i>Verified</span>' +
+                    '<button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 guest-wishlist-remove" data-product-id="' + p.id + '" title="Remove from wishlist"><i class="bi bi-heart-fill"></i></button>' +
+                    '<img src="' + (img || '/images/placeholder.svg') + '" class="card-img-top product-card-img" alt="' + (p.name || '').replace(/"/g, '&quot;') + '" onerror="this.src=\'/images/placeholder.svg\'"/>' +
+                    '</a>' +
+                    '<div class="card-body product-card-body">' +
+                    '<h6 class="card-title">' + $('<div/>').text(p.name || '').html() + '</h6>' +
+                    '<p class="mb-2"><span class="product-price">Rs ' + Number(price).toLocaleString() + '</span></p>' +
+                    '<a href="/Shop/Details/' + p.id + '" class="btn btn-shopwala btn-sm w-100">View</a>' +
+                    '</div></div></div>';
+            });
+            $('#guestWishlistGrid').html(html).removeClass('d-none');
+        })
+        .catch(function() {
+            $('#guestWishlistLoading').addClass('d-none');
+            $('#guestWishlistEmpty').removeClass('d-none');
+        });
+
+    $(document).on('click', '.guest-wishlist-remove', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var btn = this;
+        var productId = parseInt(btn.dataset.productId, 10);
+        var card = btn.closest('.guest-wishlist-card');
+        var g = getGuestWishlist().map(function(id) { return parseInt(id, 10) || id; });
+        g = g.filter(function(id) { return id !== productId; });
+        setGuestWishlist(g);
+        $(card).fadeOut(300, function() {
+            $(this).remove();
+            if ($('.guest-wishlist-card').length === 0) {
+                $('#guestWishlistGrid').addClass('d-none');
+                $('#guestWishlistEmpty').removeClass('d-none');
+            }
+        });
+        if (typeof updateWishlistCount === 'function') updateWishlistCount();
+    });
+});
+</script>
+}

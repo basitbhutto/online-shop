@@ -1,6 +1,9 @@
 wwwroot\css\site.css
 wwwroot\css\theme.css
 wwwroot\favicon.ico
+wwwroot\images\README-LOGOS.md
+wwwroot\images\log-black.png.jpeg
+wwwroot\images\logo-while.png.jpeg
 wwwroot\images\placeholder.svg
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\LICENSE

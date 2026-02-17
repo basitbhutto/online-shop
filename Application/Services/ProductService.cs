@@ -17,6 +17,7 @@ public interface IProductService
     Task<ProductDetailDto?> GetProductDetailAsync(int id, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<ProductListDto>> GetProductsByCategoryAsync(int categoryId, int skip = 0, int take = 20, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<ProductListDto>> SearchProductsAsync(string? searchTerm, int? categoryId, decimal? minPrice, decimal? maxPrice, int skip = 0, int take = 20, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<ProductListDto>> GetProductsByIdsAsync(IEnumerable<int> ids, CancellationToken cancellationToken = default);
 }
 
 public class ProductService : IProductService
@@ -183,5 +184,25 @@ public class ProductService : IProductService
                 p.Images.OrderBy(i => i.SortOrder).Select(i => i.ImageUrl).FirstOrDefault()!
             ))
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<ProductListDto>> GetProductsByIdsAsync(IEnumerable<int> ids, CancellationToken cancellationToken = default)
+    {
+        var idList = ids?.Where(id => id > 0).Distinct().Take(100).ToList() ?? new List<int>();
+        if (idList.Count == 0) return new List<ProductListDto>();
+        var results = await _productRepo.Query()
+            .Where(p => idList.Contains(p.Id) && p.Status == EntityStatus.Active)
+            .Select(p => new ProductListDto(
+                p.Id,
+                p.Name,
+                p.SKU,
+                p.Category!.Name,
+                p.SalePrice,
+                p.DiscountPrice,
+                p.Stock + p.Variants.Sum(v => v.Stock),
+                p.Images.OrderBy(i => i.SortOrder).Select(i => i.ImageUrl).FirstOrDefault()
+            ))
+            .ToListAsync(cancellationToken);
+        return results.OrderBy(p => idList.IndexOf(p.Id)).ToList();
     }
 }

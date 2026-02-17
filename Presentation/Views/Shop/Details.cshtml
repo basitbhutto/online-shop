@@ -9,12 +9,9 @@
         <div class="row g-0">
             <div class="col-md-5 p-4 position-relative">
                 <div class="position-absolute top-0 end-0 m-3">
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        <button type="button" class="btn btn-sm wishlist-btn-detail @(Model.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@Model.Id" data-in-wishlist="@Model.IsInWishlist.ToString().ToLower()">
-                            <i class="bi @(Model.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
-                        </button>
-                    }
+                    <button type="button" class="btn btn-sm wishlist-btn-detail @(User.Identity?.IsAuthenticated == true && Model.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@Model.Id" data-in-wishlist="@((User.Identity?.IsAuthenticated == true && Model.IsInWishlist).ToString().ToLower())">
+                        <i class="bi @(User.Identity?.IsAuthenticated == true && Model.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
+                    </button>
                 </div>
                 <div class="position-absolute top-0 start-0 m-3">
                     <span class="badge badge-verified"><i class="bi bi-geo-alt me-1"></i></span>
@@ -145,7 +142,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 <script>
 $(function() {
-    $('.wishlist-btn-detail').on('click', function(e) {
+    var g = typeof getGuestWishlist === 'function' ? getGuestWishlist() : [];
+    var pid = parseInt('@Model.Id', 10);
+    $('.wishlist-btn-detail').each(function() {
+        if (g.indexOf(pid) >= 0) {
+            this.dataset.inWishlist = 'true';
+            this.classList.remove('btn-outline-danger'); this.classList.add('btn-danger');
+            var icon = this.querySelector('i'); if (icon) { icon.classList.remove('bi-heart'); icon.classList.add('bi-heart-fill'); }
+        }
+    });
+    $(document).on('click', '.wishlist-btn-detail', function(e) {
         e.preventDefault();
         var btn = this;
         var productId = btn.dataset.productId;
@@ -156,32 +162,45 @@ $(function() {
     var productId = @Model.Id;
     var chatThreadId = null;
     var chatConnection = null;
+    var currentUserId = '@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "")';
+
+    function ensureChatConnection() {
+        if (typeof signalR === 'undefined') return Promise.resolve(false);
+        if (chatConnection && chatConnection.state === 1) return Promise.resolve(true);
+        if (chatConnection && chatConnection.state === 0) return chatConnection.start().then(function() { return true; });
+        chatConnection = new signalR.HubConnectionBuilder().withUrl('/hubs/productChat').withAutomaticReconnect().build();
+        chatConnection.on('ReceiveMessage', function(msg) {
+            if (msg.senderUserId && msg.senderUserId === currentUserId) return;
+            appendMessage(msg.message, msg.isFromAdmin, msg.createdAt);
+        });
+        return chatConnection.start().then(function() { return true; });
+    }
 
     $('#productChatModal').on('shown.bs.modal', function() {
-        if (chatThreadId !== null) return;
-        fetch('/api/chat/thread/' + productId, { method: 'POST', credentials: 'include' })
-            .then(function(r) { return r.json(); })
-            .then(function(d) {
-                chatThreadId = d.threadId;
-                if (!chatThreadId) return;
-                loadChatMessages();
-                fetch('/api/chat/thread/' + chatThreadId + '/read', { method: 'POST', credentials: 'include' });
-                if (typeof signalR !== 'undefined') {
-                    chatConnection = new signalR.HubConnectionBuilder().withUrl('/hubs/productChat').withAutomaticReconnect().build();
-                    chatConnection.on('ReceiveMessage', function(msg) {
-                        if (msg.senderUserId && msg.senderUserId === currentUserId) return;
-                        appendMessage(msg.message, msg.isFromAdmin, msg.createdAt);
+        if (chatThreadId === null) {
+            fetch('/api/chat/thread/' + productId, { method: 'POST', credentials: 'include' })
+                .then(function(r) { return r.json(); })
+                .then(function(d) {
+                    chatThreadId = d.threadId;
+                    if (!chatThreadId) return;
+                    loadChatMessages();
+                    fetch('/api/chat/thread/' + chatThreadId + '/read', { method: 'POST', credentials: 'include' });
+                    ensureChatConnection().then(function() {
+                        if (chatConnection && chatThreadId) chatConnection.invoke('JoinThread', chatThreadId);
                     });
-                    chatConnection.start().then(function() {
-                        chatConnection.invoke('JoinThread', chatThreadId);
-                    });
-                }
+                });
+        } else {
+            loadChatMessages();
+            fetch('/api/chat/thread/' + chatThreadId + '/read', { method: 'POST', credentials: 'include' });
+            ensureChatConnection().then(function() {
+                if (chatConnection && chatThreadId) chatConnection.invoke('JoinThread', chatThreadId);
             });
+        }
     });
 
     $('#productChatModal').on('hidden.bs.modal', function() {
         if (chatConnection && chatThreadId) {
-            chatConnection.invoke('LeaveThread', chatThreadId);
+            chatConnection.invoke('LeaveThread', chatThreadId).catch(function() {});
         }
     });
 
