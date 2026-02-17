@@ -1,0 +1,122 @@
+@model IReadOnlyList<(Domain.Entities.ProductChatThread Thread, int UnreadCount)>
+@{
+    ViewData["Title"] = "Product Chats";
+    var threads = Model ?? new List<(Domain.Entities.ProductChatThread, int)>();
+}
+
+<h1 class="mb-4"><i class="bi bi-chat-dots me-2"></i>Product Chats</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header">Chat Threads</div>
+            <div class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                @foreach (var (t, unread) in threads)
+                {
+                    <a href="#" class="list-group-item list-group-item-action chat-thread" data-thread-id="@t.Id" data-product-name="@t.Product?.Name" data-buyer="@t.Buyer?.Email">
+                        <div class="d-flex justify-content-between">
+                            <strong>@(t.Product?.Name ?? "Product")</strong>
+                            @if (unread > 0)
+                            {
+                                <span class="badge bg-danger">@unread</span>
+                            }
+                        </div>
+                        <small class="text-muted">@t.Buyer?.Email</small>
+                    </a>
+                }
+                @if (!threads.Any())
+                {
+                    <div class="list-group-item text-muted">No chats yet</div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div id="chatPanel" class="card border-0 shadow-sm @(threads.Any() ? "" : "d-none")">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span id="chatTitle">Select a thread</span>
+            </div>
+            <div id="chatMessages" class="card-body" style="height: 360px; overflow-y: auto;"></div>
+            <div class="card-footer">
+                <div class="input-group">
+                    <input type="text" id="chatInput" class="form-control" placeholder="Type your reply..." maxlength="500" />
+                    <button type="button" id="chatSendBtn" class="btn btn-primary"><i class="bi bi-send"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="chatPlaceholder" class="text-center text-muted py-5 @(threads.Any() ? "d-none" : "")">
+            <i class="bi bi-chat-dots display-4"></i>
+            <p class="mt-2">Select a chat thread to view and reply</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+<script>
+$(function() {
+    var currentThreadId = null;
+    var chatConnection = null;
+
+    $('.chat-thread').on('click', function(e) {
+        e.preventDefault();
+        var tid = $(this).data('thread-id');
+        var productName = $(this).data('product-name');
+        var buyer = $(this).data('buyer');
+        var oldTid = currentThreadId;
+        currentThreadId = tid;
+        $('#chatTitle').text(productName + ' - ' + buyer);
+        $('#chatPanel').removeClass('d-none');
+        $('#chatPlaceholder').addClass('d-none');
+        loadMessages(tid);
+        fetch('/api/chat/thread/' + tid + '/read', { method: 'POST', credentials: 'include' });
+        if (chatConnection && chatConnection.state === 1) {
+            if (oldTid) chatConnection.invoke('LeaveThread', oldTid);
+            chatConnection.invoke('JoinThread', tid);
+        }
+
+        if (typeof signalR !== 'undefined') {
+            if (!chatConnection || chatConnection.state !== 1) {
+                chatConnection = new signalR.HubConnectionBuilder().withUrl('/hubs/productChat').withAutomaticReconnect().build();
+                chatConnection.on('ReceiveMessage', function(msg) {
+                    if (currentThreadId) appendMsg(msg.message, msg.isFromAdmin, msg.createdAt);
+                });
+                chatConnection.start().then(function() { chatConnection.invoke('JoinThread', tid); });
+            }
+        }
+    });
+
+    function loadMessages(tid) {
+        $('#chatMessages').empty();
+        fetch('/api/chat/thread/' + tid + '/messages', { credentials: 'include' })
+            .then(r => r.json())
+            .then(function(msgs) {
+                msgs.forEach(function(m) { appendMsg(m.message, m.isFromAdmin, m.createdAt); });
+                $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+            });
+    }
+
+    function appendMsg(text, isAdmin, createdAt) {
+        var dt = createdAt ? new Date(createdAt).toLocaleString() : '';
+        var cls = isAdmin ? 'text-end' : '';
+        var bg = isAdmin ? 'bg-primary text-white' : 'bg-light';
+        var html = '<div class="mb-2 ' + cls + '"><div class="d-inline-block p-2 rounded-3 ' + bg + '" style="max-width:75%">' + $('<div/>').text(text).html() + '<br><small class="opacity-75">' + dt + '</small></div></div>';
+        $('#chatMessages').append(html).scrollTop($('#chatMessages')[0].scrollHeight);
+    }
+
+    $('#chatSendBtn').on('click', function() {
+        var txt = $('#chatInput').val().trim();
+        if (!txt || !currentThreadId) return;
+        $('#chatInput').val('');
+        if (typeof signalR !== 'undefined' && chatConnection && chatConnection.state === 1) {
+            chatConnection.invoke('SendMessage', currentThreadId, txt);
+        } else {
+            fetch('/api/chat/thread/' + currentThreadId + '/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: txt }), credentials: 'include' })
+                .then(r => r.json())
+                .then(function(d) { if (d) appendMsg(d.message, d.isFromAdmin, d.createdAt); });
+        }
+    });
+    $('#chatInput').on('keypress', function(e) { if (e.which === 13) { e.preventDefault(); $('#chatSendBtn').click(); } });
+});
+</script>
+}
