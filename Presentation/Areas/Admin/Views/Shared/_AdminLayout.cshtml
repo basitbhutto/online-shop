@@ -36,6 +36,7 @@
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Products"?"active":"")" asp-area="Admin" asp-controller="Products" asp-action="Index"><i class="bi bi-box me-2"></i>Products</a>
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Categories"?"active":"")" asp-area="Admin" asp-controller="Categories" asp-action="Index"><i class="bi bi-folder me-2"></i>Categories</a>
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Users"?"active":"")" asp-area="Admin" asp-controller="Users" asp-action="Index"><i class="bi bi-people me-2"></i>Users</a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="ProductChat"?"active":"")" asp-area="Admin" asp-controller="ProductChat" asp-action="Index"><i class="bi bi-chat-dots me-2"></i>Product Chats</a>
                 <a class="nav-link" href="/"><i class="bi bi-shop me-2"></i>View Store</a>
                 <form asp-controller="Account" asp-action="Logout" asp-area="" method="post" class="w-100 px-2">
                     <button type="submit" class="logout-btn border-0 bg-transparent w-100 text-start d-flex align-items-center">

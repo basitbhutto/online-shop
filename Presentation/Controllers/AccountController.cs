@@ -86,7 +86,7 @@ public class AccountController : Controller
             FullName = model.FullName,
             EmailVerified = false,
             OTPCode = otp,
-            OTPExpiry = DateTime.UtcNow.AddMinutes(10),
+            OTPExpiry = DateTime.UtcNow.AddMinutes(5),
             CreatedAt = DateTime.UtcNow
         };
 
@@ -163,7 +163,7 @@ public class AccountController : Controller
         if (user == null) return Json(new { success = false });
         var otp = new Random().Next(100000, 999999).ToString();
         user.OTPCode = otp;
-        user.OTPExpiry = DateTime.UtcNow.AddMinutes(10);
+        user.OTPExpiry = DateTime.UtcNow.AddMinutes(5);
         await _userManager.UpdateAsync(user);
         await _emailService.SendOtpAsync(email, otp, cancellationToken);
         return Json(new { success = true });

@@ -1,47 +1,78 @@
-<nav class="navbar navbar-expand-lg sticky-top shopwala-navbar py-3">
+<nav class="navbar navbar-expand-lg sticky-top shopwala-navbar">
     <div class="container">
-        <form asp-controller="Shop" asp-action="Index" method="get" class="d-flex me-3 nav-search flex-grow-1 flex-lg-grow-0 order-2 order-lg-1">
-            <i class="bi bi-search align-self-center me-2 text-muted"></i>
-            <input name="search" class="form-control border-0 bg-transparent p-0" placeholder="Search products..." value="@Context.Request.Query["search"]" />
-        </form>
-        <a class="navbar-brand d-flex align-items-center order-1 order-lg-2 mx-auto mx-lg-3" asp-controller="Home" asp-action="Index">
-            <img src="~/images/logo.png" alt="Shopwala" class="navbar-logo" onerror="this.style.display='none'; this.nextElementSibling?.style.display='inline'"/>
-            <span class="shopwala-brand ms-2">Shopwala</span>
+        <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
+            <img src="~/images/logo-black.png" alt="Shopwala" class="navbar-logo me-2" onerror="this.style.display='none'" />
+            <span class="shopwala-brand">Shopwala</span>
         </a>
-        <div class="d-flex align-items-center order-3 gap-2">
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                @if (User.IsInRole("SuperAdmin") || User.IsInRole("AdminStaff"))
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <form asp-controller="Shop" asp-action="Index" method="get" class="d-flex nav-search mx-lg-3 my-2 my-lg-0 flex-grow-1 flex-lg-grow-0">
+                <i class="bi bi-search align-self-center me-2 text-muted"></i>
+                <input name="search" class="form-control border-0 bg-transparent p-0" placeholder="Search products..." value="@Context.Request.Query["search"]" />
+            </form>
+            <ul class="navbar-nav ms-auto align-items-center flex-row gap-1 gap-lg-2">
+                @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <a class="btn btn-shopwala btn-sm d-flex align-items-center gap-1" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
-                        <i class="bi bi-speedometer2 me-1"></i> Admin
-                    </a>
+                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("AdminStaff"))
+                    {
+                        <li class="nav-item">
+                            <a class="btn btn-shopwala btn-sm" asp-area="Admin" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-speedometer2 me-1"></i>Admin</a>
+                        </li>
+                    }
+                    @if (User.IsInRole("Buyer"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link py-2" asp-area="Buyer" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-person-circle me-1"></i>Account</a>
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline mb-0">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative p-2" asp-controller="Wishlist" asp-action="Index" title="Wishlist">
+                            <i class="bi bi-heart fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="wishlistCountBadge">0</span>
+                        </a>
+                    </li>
+                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("AdminStaff"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link position-relative p-2" asp-area="Admin" asp-controller="ProductChat" asp-action="Index" title="Chat">
+                                <i class="bi bi-chat-dots fs-5"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="chatUnreadBadge" style="display:none">0</span>
+                            </a>
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <a class="nav-link position-relative p-2" href="#" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" title="Cart">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartCountBadge">0</span>
+                        </a>
+                    </li>
                 }
-                @if (User.IsInRole("Buyer"))
+                else
                 {
-                    <a class="btn btn-outline-secondary btn-sm" asp-area="Buyer" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-person-circle me-1"></i>Account</a>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative p-2" asp-controller="Wishlist" asp-action="Index" title="Wishlist">
+                            <i class="bi bi-heart fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="wishlistCountBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-2" href="#" data-bs-toggle="modal" data-bs-target="#guestChatModal" title="Chat"><i class="bi bi-chat-dots fs-5"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-shopwala btn-sm" asp-controller="Account" asp-action="Login"><i class="bi bi-person me-1"></i>Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-secondary btn-sm" asp-controller="Account" asp-action="Register">Register</a>
+                    </li>
                 }
-                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline mb-0">
-                    <button type="submit" class="btn btn-shopwala btn-sm d-flex align-items-center gap-1">
-                        <i class="bi bi-box-arrow-right"></i> Logout
-                    </button>
-                </form>
-                <a class="btn btn-light btn-sm position-relative rounded-circle p-2" asp-controller="Wishlist" asp-action="Index" title="Wishlist">
-                    <i class="bi bi-heart fs-5"></i>
-                    <span class="cart-count-badge badge bg-danger rounded-pill position-absolute top-0 end-0" id="wishlistCountBadge" style="font-size:0.65rem">0</span>
-                </a>
-                <a class="btn btn-light btn-sm position-relative rounded-circle p-2" href="#" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" title="Cart">
-                    <i class="bi bi-cart3 fs-5"></i>
-                    <span class="cart-count-badge badge bg-danger rounded-pill position-absolute top-0 end-0" id="cartCountBadge">0</span>
-                </a>
-            }
-            else
-            {
-                <a class="btn btn-shopwala btn-sm d-flex align-items-center gap-1" asp-controller="Account" asp-action="Login">
-                    <i class="bi bi-person"></i> Login
-                </a>
-                <a class="btn btn-outline-secondary btn-sm" asp-controller="Account" asp-action="Register">Register</a>
-            }
+            </ul>
         </div>
     </div>
 </nav>

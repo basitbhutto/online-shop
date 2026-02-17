@@ -7,7 +7,7 @@
 
 <div class="container-fluid py-4">
     <div class="row">
-        <aside class="col-lg-3 mb-4 mb-lg-0">
+        <aside class="col-12 col-lg-3 mb-4 mb-lg-0 order-2 order-lg-1">
             <div class="filter-sidebar sticky-top" style="top: 90px;">
                 <h5 class="mb-3 fw-bold">Filters</h5>
                 <form asp-action="Index" method="get" id="filterForm">
@@ -50,7 +50,7 @@
                 </form>
             </div>
         </aside>
-        <div class="col-lg-9">
+        <div class="col-12 col-lg-9 order-1 order-lg-2">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <div>
                     <h2 class="mb-1">Explore @title</h2>
@@ -61,23 +61,14 @@
             <div class="row g-4">
                 @foreach (var p in Model.Products)
                 {
-                    <div class="col-6 col-md-4 col-xl-3">
+                    <div class="col-12 col-sm-6 col-md-4 col-xl-3">
                         <div class="card product-card h-100 border-0">
-                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block">
+                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block text-decoration-none">
                                 <span class="badge badge-verified position-absolute top-0 start-0 m-2"><i class="bi bi-patch-check me-1"></i>Verified</span>
                                 <img src="@(p.MainImageUrl ?? "/images/placeholder.svg")" class="card-img-top product-card-img" alt="@p.Name" onerror="this.src='/images/placeholder.svg'"/>
-                                @if (User.Identity?.IsAuthenticated == true)
-                                {
-                                    <button type="button" class="btn btn-sm wishlist-btn @(p.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@p.Id" data-in-wishlist="@p.IsInWishlist.ToString().ToLower()" title="Wishlist">
-                                        <i class="bi @(p.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
-                                    </button>
-                                }
-                                else
-                                {
-                                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-sm wishlist-btn btn-outline-danger" title="Login to add to Wishlist">
-                                        <i class="bi bi-heart"></i>
-                                    </a>
-                                }
+                                <button type="button" class="btn btn-sm wishlist-btn @(User.Identity?.IsAuthenticated == true && p.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@p.Id" data-in-wishlist="@((User.Identity?.IsAuthenticated == true && p.IsInWishlist).ToString().ToLower())" title="Wishlist">
+                                    <i class="bi @(User.Identity?.IsAuthenticated == true && p.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
+                                </button>
                             </a>
                             <div class="card-body product-card-body">
                                 <h6 class="card-title">@p.Name</h6>
@@ -85,6 +76,8 @@
                                 <p class="mb-2">
                                     @if (p.SalePrice > p.DisplayPrice)
                                     {
+                                        var pct = (int)Math.Round((1 - (decimal)p.DisplayPrice / p.SalePrice) * 100);
+                                        <span class="discount-badge me-1">Save @pct%</span>
                                         <span class="product-price-old">Rs @p.SalePrice.ToString("N0")</span>
                                         <span class="product-price ms-1">Rs @p.DisplayPrice.ToString("N0")</span>
                                     }
@@ -92,9 +85,8 @@
                                     {
                                         <span class="product-price">Rs @p.DisplayPrice.ToString("N0")</span>
                                     }
-                                    <span class="text-muted small">/ unit</span>
                                 </p>
-                                <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100">Add to Cart</a>
+                                <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100">View</a>
                             </div>
                         </div>
                     </div>
@@ -131,19 +123,22 @@
 @section Scripts {
 <script>
 $(function() {
-    $('.wishlist-btn').on('click', function(e) {
+    var g = typeof getGuestWishlist === 'function' ? getGuestWishlist() : [];
+    $('.wishlist-btn').each(function() {
+        var pid = parseInt(this.dataset.productId, 10);
+        if (g.indexOf(pid) >= 0) {
+            this.dataset.inWishlist = 'true';
+            this.classList.remove('btn-outline-danger'); this.classList.add('btn-danger');
+            var icon = this.querySelector('i'); if (icon) { icon.classList.remove('bi-heart'); icon.classList.add('bi-heart-fill'); }
+        }
+    });
+    $(document).on('click', '.wishlist-btn', function(e) {
         e.preventDefault();
-        var btn = $(this);
-        var productId = btn.data('product-id');
-        var inWishlist = btn.data('in-wishlist');
-        var method = inWishlist ? 'DELETE' : 'POST';
-        $.ajax({ url: '/api/wishlist/' + productId, method: method })
-            .done(function() {
-                btn.data('in-wishlist', inWishlist ? 'false' : 'true');
-                btn.toggleClass('btn-danger btn-outline-danger');
-                btn.find('i').toggleClass('bi-heart-fill bi-heart');
-                if (typeof updateWishlistCount === 'function') updateWishlistCount();
-            });
+        e.stopPropagation();
+        var btn = this;
+        var productId = parseInt(btn.dataset.productId, 10) || btn.dataset.productId;
+        var inWishlist = btn.dataset.inWishlist === 'true';
+        if (typeof wishlistToggle === 'function') wishlistToggle(btn, productId, inWishlist);
     });
 });
 </script>

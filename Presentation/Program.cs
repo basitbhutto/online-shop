@@ -12,6 +12,7 @@ builder.Host.UseSerilog((ctx, lc) => lc
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -32,6 +33,7 @@ app.UseMiddleware<ActivityLogMiddleware>();
 
 app.MapControllerRoute(name: "areas", pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<Presentation.Hubs.ProductChatHub>("/hubs/productChat");
 
 using (var scope = app.Services.CreateScope())
 {

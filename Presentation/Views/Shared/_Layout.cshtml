@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
 </head>
-<body>
+<body data-user-authenticated="@(User.Identity?.IsAuthenticated == true ? "true" : "false")">
     <partial name="_Navbar" />
     <main role="main">
         @RenderBody()
@@ -20,6 +20,21 @@
     <partial name="_Footer" />
     <partial name="_CartDrawer" />
     <partial name="_ToastContainer" />
+    @if (User.Identity?.IsAuthenticated != true)
+    {
+    <div class="modal fade" id="guestChatModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <i class="bi bi-chat-dots display-4 text-muted"></i>
+                    <h5 class="mt-3">Chat about Products</h5>
+                    <p class="text-muted small">Please log in to chat with us about products.</p>
+                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-shopwala">Log In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

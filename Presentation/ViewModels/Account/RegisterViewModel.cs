@@ -24,8 +24,4 @@ public class RegisterViewModel
     [Display(Name = "Confirm password")]
     [Compare("Password")]
     public string? ConfirmPassword { get; set; }
-
-    [Display(Name = "I agree to Terms & Privacy Policy")]
-    [Range(typeof(bool), "true", "true", ErrorMessage = "You must agree to the terms")]
-    public bool AgreeToTerms { get; set; }
 }

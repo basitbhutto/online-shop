@@ -55,7 +55,7 @@
             <div class="col-md-7 p-4">
                 <h1 class="h3 mb-2">@Model.Name</h1>
                 <p class="text-muted small mb-3">SKU: @Model.SKU</p>
-                <div class="d-flex gap-2 mb-3">
+                <div class="d-flex flex-wrap gap-2 mb-3">
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
@@ -64,11 +64,13 @@
                             <button type="submit" class="btn btn-shopwala">Add to Cart</button>
                         </form>
                         <a asp-controller="Shop" asp-action="BuyNow" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Buy Now</a>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#productChatModal"><i class="bi bi-chat-dots me-1"></i>Chat about this product</button>
                     }
                     else
                     {
                         <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-shopwala">Login to Add to Cart</a>
                         <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("BuyNow", "Shop", new { id = Model.Id })" class="btn btn-outline-secondary">Buy Now</a>
+                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-outline-primary"><i class="bi bi-chat-dots me-1"></i>Login to Chat</a>
                     }
                 </div>
                 <p class="small text-muted mb-2"><i class="bi bi-truck me-1"></i>Shipping to: Karachi, Pakistan</p>
@@ -116,22 +118,108 @@
     </div>
 </div>
 
+@if (User.Identity?.IsAuthenticated == true)
+{
+<div class="modal fade" id="productChatModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable" style="max-width: 480px;">
+        <div class="modal-content">
+            <div class="modal-header py-2">
+                <h6 class="modal-title"><i class="bi bi-chat-dots me-1"></i>Chat - @Model.Name</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0" style="min-height: 320px;">
+                <div id="chatMessages" class="p-3" style="max-height: 320px; overflow-y: auto;"></div>
+                <div class="p-3 border-top">
+                    <div class="input-group">
+                        <input type="text" id="chatInput" class="form-control" placeholder="Type your message..." maxlength="500" />
+                        <button type="button" id="chatSendBtn" class="btn btn-shopwala"><i class="bi bi-send"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
 @section Scripts {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 <script>
 $(function() {
-    $('.wishlist-btn-detail').on('click', function() {
-        var btn = $(this);
-        var productId = btn.data('product-id');
-        var inWishlist = btn.data('in-wishlist');
-        var method = inWishlist ? 'DELETE' : 'POST';
-        $.ajax({ url: '/api/wishlist/' + productId, method: method })
-            .done(function() {
-                btn.data('in-wishlist', inWishlist ? 'false' : 'true');
-                btn.toggleClass('btn-danger btn-outline-danger');
-                btn.find('i').toggleClass('bi-heart-fill bi-heart');
-                if (typeof updateWishlistCount === 'function') updateWishlistCount();
+    $('.wishlist-btn-detail').on('click', function(e) {
+        e.preventDefault();
+        var btn = this;
+        var productId = btn.dataset.productId;
+        var inWishlist = btn.dataset.inWishlist === 'true';
+        if (typeof wishlistToggle === 'function') wishlistToggle(btn, productId, inWishlist);
+    });
+
+    var productId = @Model.Id;
+    var chatThreadId = null;
+    var chatConnection = null;
+
+    $('#productChatModal').on('shown.bs.modal', function() {
+        if (chatThreadId !== null) return;
+        fetch('/api/chat/thread/' + productId, { method: 'POST', credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                chatThreadId = d.threadId;
+                if (!chatThreadId) return;
+                loadChatMessages();
+                fetch('/api/chat/thread/' + chatThreadId + '/read', { method: 'POST', credentials: 'include' });
+                if (typeof signalR !== 'undefined') {
+                    chatConnection = new signalR.HubConnectionBuilder().withUrl('/hubs/productChat').withAutomaticReconnect().build();
+                    chatConnection.on('ReceiveMessage', function(msg) {
+                        if (msg.senderUserId && msg.senderUserId === currentUserId) return;
+                        appendMessage(msg.message, msg.isFromAdmin, msg.createdAt);
+                    });
+                    chatConnection.start().then(function() {
+                        chatConnection.invoke('JoinThread', chatThreadId);
+                    });
+                }
             });
     });
+
+    $('#productChatModal').on('hidden.bs.modal', function() {
+        if (chatConnection && chatThreadId) {
+            chatConnection.invoke('LeaveThread', chatThreadId);
+        }
+    });
+
+    function loadChatMessages() {
+        if (!chatThreadId) return;
+        fetch('/api/chat/thread/' + chatThreadId + '/messages', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
+            .then(function(msgs) {
+                $('#chatMessages').empty();
+                msgs.forEach(function(m) {
+                    appendMessage(m.message, m.isFromAdmin, m.createdAt);
+                });
+                $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+            });
+    }
+
+    function appendMessage(text, isFromAdmin, createdAt) {
+        var dt = createdAt ? new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+        var html = '<div class="mb-2 ' + (isFromAdmin ? 'text-end' : '') + '"><div class="d-inline-block p-2 rounded-3 ' + (isFromAdmin ? 'bg-primary text-white' : 'bg-light') + '" style="max-width:85%"><small>' + $('<div/>').text(text).html() + '</small><br><small class="opacity-75">' + dt + '</small></div></div>';
+        $('#chatMessages').append(html).scrollTop($('#chatMessages')[0].scrollHeight);
+    }
+
+    function doSend() {
+        var txt = $('#chatInput').val().trim();
+        if (!txt || !chatThreadId) return;
+        $('#chatInput').val('');
+        var isConnected = typeof signalR !== 'undefined' && chatConnection && chatConnection.state === 1;
+        if (isConnected) {
+            appendMessage(txt, false, new Date().toISOString());
+            chatConnection.invoke('SendMessage', chatThreadId, txt);
+        } else {
+            fetch('/api/chat/thread/' + chatThreadId + '/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: txt }), credentials: 'include' })
+                .then(function(r) { return r.json(); })
+                .then(function(d) { if (d) appendMessage(d.message, d.isFromAdmin, d.createdAt); });
+        }
+    }
+    $('#chatSendBtn').on('click', doSend);
+    $('#chatInput').on('keypress', function(e) { if (e.which === 13) { e.preventDefault(); doSend(); } });
 });
 </script>
 }

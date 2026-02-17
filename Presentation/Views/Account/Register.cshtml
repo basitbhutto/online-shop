@@ -32,11 +32,6 @@
                 <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
             </div>
             <button type="submit" class="btn btn-shopwala btn-lg w-100 py-3 rounded-3 mb-3">Create Account</button>
-            <div class="mb-3 form-check">
-                <input asp-for="AgreeToTerms" class="form-check-input" style="accent-color: var(--shopwala-primary)" />
-                <label asp-for="AgreeToTerms" class="form-check-label small">I agree to <a href="#">Terms</a> & <a href="#">Privacy Policy</a></label>
-                <span asp-validation-for="AgreeToTerms" class="text-danger small d-block"></span>
-            </div>
         </form>
         <p class="text-center mb-0 small">Already have an account? <a asp-action="Login" class="text-primary fw-semibold">Log In</a></p>
     </div>

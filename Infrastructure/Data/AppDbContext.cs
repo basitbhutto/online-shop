@@ -30,6 +30,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<OrderStatusHistory> OrderStatusHistories => Set<OrderStatusHistory>();
     public DbSet<DeliveryAssignment> DeliveryAssignments => Set<DeliveryAssignment>();
     public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
+    public DbSet<ProductChatThread> ProductChatThreads => Set<ProductChatThread>();
+    public DbSet<ProductChatMessage> ProductChatMessages => Set<ProductChatMessage>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -96,6 +98,18 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         {
             e.HasKey(x => x.Id);
             e.HasIndex(x => x.ProductId);
+        });
+
+        builder.Entity<ProductChatThread>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => new { x.ProductId, x.BuyerUserId }).IsUnique();
+        });
+
+        builder.Entity<ProductChatMessage>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => x.ThreadId);
         });
     }
 }
