@@ -1,12 +1,15 @@
 using Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities;
 
 public class Category
 {
-    public int Id { get; set; }
+    [Key]
+
+    public long Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public int? ParentId { get; set; }
+    public long? ParentId { get; set; }
     public string Slug { get; set; } = string.Empty;
     public string? ImageUrl { get; set; }
     public EntityStatus Status { get; set; }

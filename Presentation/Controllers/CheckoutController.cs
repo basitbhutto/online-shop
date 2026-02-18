@@ -108,7 +108,7 @@ public class CheckoutController : Controller
         return RedirectToAction("Confirmation", new { orderId = order.Id });
     }
 
-    public async Task<IActionResult> Confirmation(int orderId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Confirmation(long orderId, CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
         var order = await _orderService.GetOrderByIdAsync(orderId, userId, cancellationToken);

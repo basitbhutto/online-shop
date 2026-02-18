@@ -18,6 +18,7 @@ var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

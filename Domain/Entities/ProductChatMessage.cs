@@ -1,9 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Entities;
 
 public class ProductChatMessage
 {
-    public int Id { get; set; }
-    public int ThreadId { get; set; }
+    [Key]
+    public Guid Id { get; set; }
+    public Guid ThreadId { get; set; }
     public string UserId { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
     public bool IsFromAdmin { get; set; }

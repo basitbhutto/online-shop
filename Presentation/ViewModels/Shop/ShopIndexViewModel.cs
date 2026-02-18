@@ -4,8 +4,12 @@ public record ShopIndexViewModel
 {
     public List<ProductCardViewModel> Products { get; init; } = new();
     public List<CategoryViewModel> Categories { get; init; } = new();
+    public List<LocationFilterViewModel> LocationOptions { get; init; } = new();
     public string? SearchTerm { get; init; }
-    public int? SelectedCategoryId { get; init; }
+    public long? SelectedCategoryId { get; init; }
+    public long? SelectedLocationId { get; init; }
+    public decimal? UserLat { get; init; }
+    public decimal? UserLng { get; init; }
     public string? CategoryName { get; init; }
     public decimal? MinPrice { get; init; }
     public decimal? MaxPrice { get; init; }
@@ -14,8 +18,10 @@ public record ShopIndexViewModel
     public int TotalPages { get; init; } = 1;
 }
 
+public record LocationFilterViewModel(long Id, string DisplayName);
+
 public record ProductCardViewModel(
-    int Id,
+    long Id,
     string Name,
     string SKU,
     string CategoryName,
@@ -23,7 +29,8 @@ public record ProductCardViewModel(
     decimal SalePrice,
     int Stock,
     string? MainImageUrl,
-    bool IsInWishlist
+    bool IsInWishlist,
+    string? LocationName
 );
 
-public record CategoryViewModel(int Id, string Name, string Slug);
+public record CategoryViewModel(long Id, string Name, string Slug);

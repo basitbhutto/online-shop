@@ -1,8 +1,8 @@
 namespace Presentation.ViewModels.Cart;
 
 public record CartItemViewModel(
-    int Id,
-    int ProductId,
+    long Id,
+    long ProductId,
     string ProductName,
     string SKU,
     string? VariantCombination,

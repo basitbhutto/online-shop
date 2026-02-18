@@ -1,113 +1,329 @@
-/* Shopwala - Glassmorphism Theme */
+/* Shopwala - Clear Glassmorphism: frosted glass, blur, #FF6A2C */
 :root {
-  --shopwala-primary: #e85d04;
-  --shopwala-primary-dark: #d45503;
-  --shopwala-secondary: #f48c06;
+  --shopwala-primary: #FF6A2C;
+  --shopwala-primary-dark: #e55a20;
+  --shopwala-secondary: #ff8c5a;
   --shopwala-dark: #212529;
   --shopwala-gray: #6c757d;
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  /* Glass: clearly transparent so blur shows through */
+  --glass-bg: rgba(255, 255, 255, 0.22);
+  --glass-bg-strong: rgba(255, 255, 255, 0.18);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-border-strong: rgba(255, 255, 255, 0.55);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --modal-backdrop-blur: 20px;
+  --radius: 20px;
+  --radius-sm: 10px;
+  --glow: 0 0 40px rgba(255, 106, 44, 0.18), 0 0 80px rgba(255, 106, 44, 0.08);
+  --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* Typography - clear sizes */
+body {
+  font-family: var(--font-main);
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--shopwala-dark);
+}
+h1, .h1 { font-size: 1.75rem; font-weight: 700; }
+h2, .h2 { font-size: 1.5rem; font-weight: 700; }
+h5, .h5 { font-size: 1.125rem; font-weight: 600; }
+h6, .h6 { font-size: 1rem; font-weight: 600; }
+.small, small { font-size: 0.875rem; }
+
+/* Page background - bold enough so glass blur is obvious */
 body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #f8f9fa 0%, #fff5eb 50%, #f8f9fa 100%);
+  background: linear-gradient(145deg, #d4dce8 0%, #f5e6dc 30%, #e2d8f0 60%, #d8e8f0 100%);
   background-attachment: fixed;
+  position: relative;
+}
+body::before {
+  content: '';
+  position: fixed;
+  top: -30%;
+  left: -10%;
+  width: 60%;
+  height: 80%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(255, 106, 44, 0.15) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -20%;
+  right: -10%;
+  width: 55%;
+  height: 70%;
+  background: radial-gradient(ellipse at 70% 80%, rgba(255, 140, 90, 0.12) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-main { flex: 1; }
+main { flex: 1; position: relative; z-index: 1; }
 
-/* Glassmorphism */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
+/* Glassmorphism - frosted glass (blur must be visible) */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid var(--glass-border-strong);
+    box-shadow: var(--glass-shadow);
+    border-radius: var(--radius);
+  }
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid var(--glass-border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--glass-shadow), var(--glow);
+  }
 }
-
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
+@supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+  .glass, .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius);
+    box-shadow: var(--glass-shadow);
+  }
 }
+.glass { border-radius: var(--radius); }
+.glass-card { border-radius: var(--radius); }
 
 .glass-dark {
-  background: rgba(33, 37, 41, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(33, 37, 41, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius);
 }
 
-/* Navbar */
+/* Modal: backdrop must not steal clicks so chat input can get focus and accept text */
+.modal-backdrop {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(var(--modal-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--modal-backdrop-blur));
+  background: rgba(0, 0, 0, 0.3) !important;
+  z-index: 1040 !important;
+  pointer-events: none !important;
+}
+.modal-backdrop.show {
+  opacity: var(--bs-backdrop-opacity, 0.5) !important;
+}
+.modal {
+  z-index: 1055 !important;
+  position: fixed !important;
+  pointer-events: auto !important;
+}
+.modal.show {
+  opacity: 1;
+}
+.modal .modal-dialog {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto !important;
+}
+.modal .modal-content {
+  pointer-events: auto !important;
+}
+.modal .modal-body,
+.modal .modal-header,
+.modal .modal-footer {
+  pointer-events: auto !important;
+}
+.modal input,
+.modal textarea,
+.modal .form-control,
+.modal button:not([disabled]) {
+  pointer-events: auto !important;
+  opacity: 1;
+  visibility: visible;
+}
+.modal .modal-content,
+.modal .modal-body {
+  opacity: 1;
+  visibility: visible;
+}
+/* Chat modal input must be focusable and editable */
+#productChatModal input#chatInput,
+#productChatModal .form-control {
+  pointer-events: auto !important;
+  user-select: text !important;
+}
+
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .modal-content {
+    background: var(--glass-bg);
+    backdrop-filter: blur(28px) saturate(1.4);
+    -webkit-backdrop-filter: blur(28px) saturate(1.4);
+    border: 1px solid var(--glass-border-strong);
+    border-radius: var(--radius);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5), var(--glow);
+  }
+}
+@supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+  .modal-content { background: rgba(255, 255, 255, 0.95); }
+}
+.modal-content { border-radius: var(--radius); border: 1px solid var(--glass-border-strong); }
+
+.modal-header, .modal-footer {
+  border-color: rgba(0,0,0,0.06);
+}
+
+/* Navbar - frosted glass */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .shopwala-navbar {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border-bottom: 1px solid var(--glass-border-strong);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    padding: 0.5rem 0;
+  }
+}
+@supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+  .shopwala-navbar { background: rgba(255, 255, 255, 0.92) !important; }
+}
 .shopwala-navbar {
-  background: #fff !important;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 1px 12px rgba(0,0,0,0.06);
+  border-bottom: 1px solid var(--glass-border-strong);
   padding: 0.5rem 0;
 }
 
-.shopwala-navbar .navbar-brand { color: var(--shopwala-dark) !important; display: flex; align-items: center; }
+.shopwala-navbar .navbar-brand { color: var(--shopwala-dark) !important; display: flex; align-items: center; gap: 0.5rem; }
 .shopwala-navbar .nav-link { color: var(--shopwala-dark) !important; }
 .shopwala-navbar .nav-link:hover { color: var(--shopwala-primary) !important; }
-.navbar-logo { height: 38px; max-width: 130px; object-fit: contain; }
-.shopwala-brand { font-weight: 700; font-size: 1.3rem; color: var(--shopwala-primary) !important; }
+.navbar-logo { height: 52px; max-width: 180px; object-fit: contain; display: block; }
+.shopwala-navbar .navbar-brand-text { display: inline-block; font-weight: 700; font-size: 1.35rem; }
+.shopwala-navbar .navbar-brand.logo-fallback .navbar-logo { display: none !important; }
+.shopwala-brand { font-weight: 700; font-size: 1.3rem; color: var(--shopwala-primary) !important; background: linear-gradient(135deg, var(--shopwala-primary), var(--shopwala-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .shopwala-navbar .navbar-nav .nav-link.position-relative .badge { font-size: 0.65rem; }
+.shopwala-navbar.sticky-top { z-index: 1030; }
 
-/* Search */
+/* Search bar - glass */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .nav-search {
+    background: rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border-strong);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 1.25rem;
+    max-width: 400px;
+    box-shadow: var(--glass-shadow);
+  }
+}
 .nav-search {
-  background: rgba(255,255,255,0.9);
-  border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 50px;
+  border-radius: var(--radius-sm);
   padding: 0.5rem 1.25rem;
   max-width: 400px;
+  border: 1px solid var(--glass-border);
+}
+@supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+  .nav-search { background: rgba(255, 255, 255, 0.9); }
 }
 
-/* Buttons */
+/* Search suggestions dropdown */
+.nav-search-wrap { max-width: 400px; }
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border-strong);
+  border-radius: var(--radius-sm);
+  z-index: 1050;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+.search-suggestions .suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  text-decoration: none;
+  color: var(--shopwala-dark);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  transition: background 0.15s;
+}
+.search-suggestions .suggestion-item:last-child { border-bottom: none; }
+.search-suggestions .suggestion-item:hover { background: rgba(255, 106, 44, 0.08); }
+.search-suggestions .suggestion-item img { width: 44px; height: 44px; object-fit: cover; border-radius: 8px; }
+.search-suggestions .suggestion-item .suggestion-name { font-weight: 500; font-size: 0.9375rem; }
+.search-suggestions .suggestion-item .suggestion-price { font-size: 0.8125rem; color: var(--shopwala-primary); font-weight: 600; }
+.search-suggestions .suggestion-loading, .search-suggestions .suggestion-empty { padding: 14px; color: var(--shopwala-gray); font-size: 0.875rem; }
+
+/* Buttons - orange gradient, 10px radius */
 .btn-shopwala {
   background: linear-gradient(135deg, var(--shopwala-primary), var(--shopwala-secondary));
   border: none;
   color: #fff !important;
   font-weight: 600;
-  border-radius: 50px;
+  border-radius: var(--radius-sm);
   padding: 0.5rem 1.5rem;
-  box-shadow: 0 4px 15px rgba(232, 93, 4, 0.35);
+  box-shadow: 0 4px 15px rgba(255, 106, 44, 0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .btn-shopwala:hover {
   background: linear-gradient(135deg, var(--shopwala-primary-dark), var(--shopwala-primary));
   color: #fff !important;
-  box-shadow: 0 6px 20px rgba(232, 93, 4, 0.45);
+  box-shadow: 0 6px 20px rgba(255, 106, 44, 0.45);
   transform: translateY(-1px);
 }
 
-/* Product Cards - Clean, Stylo-inspired */
+/* Product Cards - frosted glass */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .product-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid var(--glass-border-strong);
+    border-radius: var(--radius);
+    overflow: hidden;
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.25s;
+    box-shadow: var(--glass-shadow), var(--glow);
+  }
+}
+@supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+  .product-card { background: rgba(255, 255, 255, 0.9); box-shadow: var(--glass-shadow); }
+}
 .product-card {
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 12px;
+  border-radius: var(--radius);
   overflow: hidden;
   height: 100%;
-  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.25s;
+  border: 1px solid var(--glass-border-strong);
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-  border-color: rgba(232, 93, 4, 0.2);
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 0 32px rgba(255, 106, 44, 0.18), inset 0 1px 0 rgba(255,255,255,0.5);
+  border-color: rgba(255, 106, 44, 0.4);
 }
 
 .product-card-img {
   aspect-ratio: 1;
   object-fit: cover;
   background: #f8f9fa;
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
 }
 
 .product-card:hover .product-card-img {
@@ -130,27 +346,41 @@ main { flex: 1; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--glass-bg);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border-strong);
+  transition: transform 0.2s;
 }
+.wishlist-btn:hover { transform: scale(1.1); }
 .wishlist-btn.btn-outline-danger { border: 2px solid var(--shopwala-primary); color: var(--shopwala-primary); }
-.wishlist-btn.btn-outline-danger:hover { background: rgba(232,93,4,0.2); }
+.wishlist-btn.btn-outline-danger:hover { background: rgba(255,106,44,0.2); }
 .wishlist-btn.btn-danger { background: var(--shopwala-primary); border: none; color: #fff; }
 
-/* Category tiles */
+/* Category tiles - frosted glass */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .category-tile {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid var(--glass-border-strong);
+    box-shadow: var(--glass-shadow), var(--glow);
+  }
+}
+@supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+  .category-tile { background: rgba(255, 255, 255, 0.88); }
+}
 .category-tile {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  padding: 1.25rem;
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
   text-align: center;
-  transition: all 0.3s;
-  min-height: 120px;
+  transition: all 0.3s ease;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  border: 1px solid var(--glass-border-strong);
 }
 
 .category-tile:hover, .category-tile.active {
@@ -158,82 +388,226 @@ main { flex: 1; }
   color: #fff;
   border-color: transparent;
   transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(232,93,4,0.35);
+  box-shadow: 0 8px 25px rgba(255,106,44,0.35), var(--glow);
 }
 
-/* Filter sidebar */
+/* Filter sidebar - frosted glass */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .filter-sidebar {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid var(--glass-border-strong);
+    box-shadow: var(--glass-shadow), var(--glow);
+  }
+}
+@supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+  .filter-sidebar { background: rgba(255, 255, 255, 0.9); }
+}
 .filter-sidebar {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  border-radius: var(--radius);
   padding: 1.5rem;
-  box-shadow: var(--glass-shadow);
+  border: 1px solid var(--glass-border-strong);
 }
 
-/* Modal / Auth cards */
+.filter-sidebar h5 { font-weight: 700; color: var(--shopwala-dark); font-size: 1.125rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(255, 106, 44, 0.25); }
+.filter-sidebar .filter-section { background: rgba(255, 255, 255, 0.4); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1rem; border: 1px solid rgba(255, 255, 255, 0.5); }
+.filter-sidebar .filter-section h6 { font-weight: 600; color: var(--shopwala-dark); font-size: 0.9375rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+.filter-sidebar .filter-section h6 i { color: var(--shopwala-primary); font-size: 1rem; }
+.filter-sidebar .form-check { padding-left: 1.6rem; margin-bottom: 0.5rem; }
+.filter-sidebar .form-check-input:checked { background-color: var(--shopwala-primary); border-color: var(--shopwala-primary); }
+.filter-sidebar .form-check-label { cursor: pointer; font-size: 0.9375rem; }
+.filter-sidebar input[type="number"] { border-radius: var(--radius-sm); border: 1px solid rgba(0,0,0,0.12); padding: 0.4rem 0.5rem; font-size: 0.9375rem; }
+.filter-sidebar .btn-shopwala { width: 100%; margin-top: 0.25rem; }
+.filter-sidebar .btn-link.text-muted { font-size: 0.875rem; margin-top: 0.5rem; }
+
+/* Price range slider styling */
+input[type="range"].price-slider {
+  accent-color: var(--shopwala-primary);
+  width: 100%;
+}
+
+/* Auth / Modal cards - frosted glass */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .auth-modal {
+    background: var(--glass-bg);
+    backdrop-filter: blur(28px) saturate(1.4);
+    -webkit-backdrop-filter: blur(28px) saturate(1.4);
+    border: 1px solid var(--glass-border-strong);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5), var(--glow);
+  }
+}
+@supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+  .auth-modal { background: rgba(255, 255, 255, 0.95); }
+}
 .auth-modal {
-  background: var(--glass-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+  border-radius: var(--radius);
   padding: 2.5rem;
+  border: 1px solid var(--glass-border-strong);
 }
 
-/* OTP inputs */
+.auth-modal .form-control {
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 0.75rem 1rem;
+}
+.auth-modal .form-control:focus {
+  border-color: var(--shopwala-primary);
+  box-shadow: 0 0 0 3px rgba(255, 106, 44, 0.2);
+  outline: none;
+}
+
+/* OTP inputs - orange border, 20px radius */
 .otp-input {
-  width: 48px;
+  width: 52px;
   height: 56px;
   text-align: center;
   font-size: 1.5rem;
   font-weight: 600;
-  border: 2px solid #dee2e6;
-  border-radius: 12px;
+  border: 2px solid var(--shopwala-primary);
+  border-radius: var(--radius-sm);
   transition: all 0.2s;
 }
 
 .otp-input:focus {
   border-color: var(--shopwala-primary);
-  box-shadow: 0 0 0 4px rgba(232,93,4,0.2);
+  box-shadow: 0 0 0 4px rgba(255, 106, 44, 0.2);
   outline: none;
 }
 
 .cart-count-badge { font-size: 0.65rem; }
+
+/* Footer - compact, logo always visible */
 .shopwala-footer {
-  background: #212529;
+  background: #1a1d21;
   color: #fff;
   margin-top: auto;
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
 }
+.shopwala-footer .container { padding-top: 0; padding-bottom: 0; }
+.shopwala-footer .row { --bs-gutter-y: 0.75rem; --bs-gutter-x: 1rem; }
+.shopwala-footer .py-5 { padding-top: 1rem !important; padding-bottom: 0.75rem !important; }
+.shopwala-footer h6 { font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.5rem; }
+.shopwala-footer ul li { margin-bottom: 0.35rem; }
+.shopwala-footer hr { margin-top: 0.75rem !important; margin-bottom: 0.5rem !important; border-color: rgba(255,255,255,0.15) !important; }
+.shopwala-footer .text-center.small { margin-bottom: 0; padding-bottom: 0.25rem; font-size: 0.8125rem; }
+/* Logo + brand text always visible in footer */
+#footerBrand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem !important;
+}
+.footer-brand-wrap { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+#footerBrand .footer-logo {
+  height: 44px;
+  max-width: 130px;
+  min-width: 56px;
+  object-fit: contain;
+  display: block;
+}
+#footerBrand .footer-brand-text {
+  font-family: var(--font-main);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff !important;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+#footerBrand.logo-fallback .footer-logo { display: none !important; }
 .shopwala-footer a:hover { color: #fff !important; }
 .form-control:focus, .form-select:focus {
   border-color: var(--shopwala-primary);
-  box-shadow: 0 0 0 0.2rem rgba(232,93,4,0.25);
+  box-shadow: 0 0 0 0.2rem rgba(255, 106, 44, 0.25);
 }
 
-/* Verified badge */
+/* Active thumbnail border - orange */
+.border-shopwala, .thumb-active { border-color: var(--shopwala-primary) !important; }
+
+/* Verified badge - orange gradient */
 .badge-verified {
   background: linear-gradient(135deg, var(--shopwala-primary), var(--shopwala-secondary));
   color: #fff;
   font-size: 0.7rem;
   padding: 0.25rem 0.5rem;
   border-radius: 50px;
+  box-shadow: 0 2px 8px rgba(255, 106, 44, 0.3);
 }
 
-/* Mobile responsive */
-@media (max-width: 575.98px) {
+/* Modal close button - orange circle */
+.modal-glass .btn-close-custom {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--shopwala-primary), var(--shopwala-secondary));
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(255, 106, 44, 0.4);
+  transition: transform 0.2s;
+}
+.modal-glass .btn-close-custom:hover { color: #fff; transform: scale(1.05); }
+
+/* Floating Chat Button - bottom right, WhatsApp style */
+.floating-chat-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--shopwala-primary), var(--shopwala-secondary));
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(255, 106, 44, 0.45);
+  z-index: 1040;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+.floating-chat-btn:hover {
+  color: #fff;
+  transform: scale(1.08);
+  box-shadow: 0 6px 28px rgba(255, 106, 44, 0.5);
+}
+.floating-chat-btn i { font-size: 1.5rem; }
+
+/* Offcanvas - frosted glass */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .offcanvas {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border-left: 1px solid var(--glass-border-strong);
+    box-shadow: -8px 0 32px rgba(0,0,0,0.1), inset 1px 0 0 rgba(255,255,255,0.5);
+  }
+}
+@supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+  .offcanvas { background: rgba(255, 255, 255, 0.96); }
+}
+.offcanvas { border-left: 1px solid var(--glass-border-strong); }
+.offcanvas-header.bg-dark { background: linear-gradient(135deg, var(--shopwala-primary), var(--shopwala-secondary)) !important; }
+
+/* Mobile responsive - sidebar collapses */
+@media (max-width: 991.98px) {
+  .filter-sidebar {
+    margin-bottom: 1rem;
+  }
   .navbar .container { padding-left: 0.75rem; padding-right: 0.75rem; }
   .navbar .nav-search { max-width: 100%; }
   .product-card .card-body { padding: 1rem; }
 }
 
-@media (max-width: 767.98px) {
-  .col-6.col-md-4.col-xl-3 { flex: 0 0 100%; max-width: 100%; }
-  .row.g-4 .col-6 { flex: 0 0 100%; max-width: 100%; }
-}
-
-/* Force 1 product per row on mobile in product grids */
 @media (max-width: 767.98px) {
   .row.g-4 > [class*="col-"] {
     flex: 0 0 100%;
@@ -241,7 +615,10 @@ main { flex: 1; }
   }
 }
 
-/* Header icons align on mobile */
+@media (max-width: 575.98px) {
+  .floating-chat-btn { bottom: 16px; right: 16px; width: 52px; height: 52px; }
+}
+
 @media (max-width: 991.98px) {
   .navbar .d-flex.align-items-center.gap-2 { gap: 0.5rem !important; }
   .navbar .btn-sm.rounded-circle { padding: 0.4rem !important; }

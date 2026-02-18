@@ -28,4 +28,4 @@ public class CheckoutViewModel
     public string? PreferredDeliveryTime { get; set; }
 }
 
-public record CheckoutItemViewModel(int CartItemId, int ProductId, string ProductName, int? VariantId, string? VariantCombination, int Quantity, decimal Price);
+public record CheckoutItemViewModel(long CartItemId, long ProductId, string ProductName, long? VariantId, string? VariantCombination, int Quantity, decimal Price);

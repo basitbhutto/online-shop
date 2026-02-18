@@ -22,7 +22,7 @@ namespace Presentation.Controllers
         public async Task<IActionResult> Index(CancellationToken ct = default)
         {
             var cats = await _categoryService.GetRootCategoriesAsync(ct);
-            var products = await _productService.SearchProductsAsync(null, null, null, null, 0, 12, ct);
+            var products = await _productService.SearchProductsAsync(null, null, null, null, null, null, null, 0, 12, ct);
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var productCards = new List<ProductCardItem>();
             foreach (var p in products)
@@ -38,7 +38,8 @@ namespace Presentation.Controllers
                     SalePrice = p.SalePrice,
                     Stock = p.Stock,
                     MainImageUrl = p.MainImageUrl,
-                    IsInWishlist = isInWishlist
+                    IsInWishlist = isInWishlist,
+                    LocationName = p.LocationName
                 });
             }
             var model = new HomeIndexViewModel

@@ -2,7 +2,7 @@ namespace Presentation.Areas.Admin.ViewModels;
 
 public class ProductListAdminViewModel
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string Name { get; set; } = "";
     public string SKU { get; set; } = "";
     public string? ImageUrl { get; set; }
@@ -14,10 +14,11 @@ public class ProductListAdminViewModel
 
 public class ProductEditViewModel
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string? Name { get; set; }
     public string? SKU { get; set; }
-    public int CategoryId { get; set; }
+    public long CategoryId { get; set; }
+    public long? LocationId { get; set; }
     public decimal PurchasePrice { get; set; }
     public decimal SalePrice { get; set; }
     public decimal? DiscountPrice { get; set; }

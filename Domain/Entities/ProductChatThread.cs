@@ -1,9 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Entities;
 
 public class ProductChatThread
 {
-    public int Id { get; set; }
-    public int ProductId { get; set; }
+    [Key]
+    public Guid Id { get; set; }
+    public long ProductId { get; set; }
     public string BuyerUserId { get; set; } = string.Empty;
 
     public Product Product { get; set; } = null!;

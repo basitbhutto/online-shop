@@ -22,8 +22,8 @@ public class ProductChatApiController : ControllerBase
         _hubContext = hubContext;
     }
 
-    [HttpPost("thread/{productId:int}")]
-    public async Task<IActionResult> GetOrCreateThread(int productId, CancellationToken ct)
+    [HttpPost("thread/{productId}")]
+    public async Task<IActionResult> GetOrCreateThread(long productId, CancellationToken ct)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
@@ -31,8 +31,8 @@ public class ProductChatApiController : ControllerBase
         return Ok(new { threadId = thread?.Id });
     }
 
-    [HttpGet("thread/{threadId:int}/messages")]
-    public async Task<IActionResult> GetMessages(int threadId, CancellationToken ct)
+    [HttpGet("thread/{threadId:guid}/messages")]
+    public async Task<IActionResult> GetMessages(Guid threadId, CancellationToken ct)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
@@ -41,8 +41,8 @@ public class ProductChatApiController : ControllerBase
         return Ok(msgs.Select(m => new { m.Id, m.Message, m.IsFromAdmin, m.CreatedAt }));
     }
 
-    [HttpPost("thread/{threadId:int}/send")]
-    public async Task<IActionResult> SendMessage(int threadId, [FromBody] SendMessageRequest req, CancellationToken ct)
+    [HttpPost("thread/{threadId:guid}/send")]
+    public async Task<IActionResult> SendMessage(Guid threadId, [FromBody] SendMessageRequest req, CancellationToken ct)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId) || string.IsNullOrWhiteSpace(req?.Message)) return BadRequest();
@@ -62,8 +62,8 @@ public class ProductChatApiController : ControllerBase
         return Ok(new { msg.Id, msg.Message, msg.IsFromAdmin, msg.CreatedAt });
     }
 
-    [HttpPost("thread/{threadId:int}/read")]
-    public async Task<IActionResult> MarkAsRead(int threadId, CancellationToken ct)
+    [HttpPost("thread/{threadId:guid}/read")]
+    public async Task<IActionResult> MarkAsRead(Guid threadId, CancellationToken ct)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId)) return Unauthorized();

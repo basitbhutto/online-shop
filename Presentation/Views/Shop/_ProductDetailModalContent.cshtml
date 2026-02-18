@@ -1,0 +1,81 @@
+@model Presentation.ViewModels.Shop.ProductDetailViewModel
+@{
+    var displayPrice = Model.DiscountPrice ?? Model.SalePrice;
+}
+<div class="product-detail-modal-content p-4">
+    <div class="row g-4">
+        <div class="col-md-5 position-relative">
+            <button type="button" class="btn btn-sm wishlist-btn-detail position-absolute top-0 end-0 m-2 @(User.Identity?.IsAuthenticated == true && Model.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@Model.Id" data-in-wishlist="@((User.Identity?.IsAuthenticated == true && Model.IsInWishlist).ToString().ToLower())">
+                <i class="bi @(User.Identity?.IsAuthenticated == true && Model.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
+            </button>
+            <div id="productModalGallery" class="carousel slide mb-3" data-bs-ride="carousel">
+                <div class="carousel-inner rounded-3 overflow-hidden" style="border-radius: 20px !important;">
+                    @for (var i = 0; i < (Model.ImageUrls?.Count ?? 0); i++)
+                    {
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            <img src="@Model.ImageUrls![i]" class="d-block w-100" style="aspect-ratio:1;object-fit:cover" alt="@Model.Name" onerror="this.src='/images/placeholder.svg'"/>
+                        </div>
+                    }
+                    @if (Model.ImageUrls == null || Model.ImageUrls.Count == 0)
+                    {
+                        <div class="carousel-item active">
+                            <img src="/images/placeholder.svg" class="d-block w-100" style="aspect-ratio:1;object-fit:cover" alt="@Model.Name"/>
+                        </div>
+                    }
+                </div>
+            </div>
+            @if (Model.ImageUrls != null && Model.ImageUrls.Count > 1)
+            {
+                <div class="d-flex gap-2 overflow-auto pb-2">
+                    @for (var i = 0; i < Model.ImageUrls.Count; i++)
+                    {
+                        <button type="button" class="flex-shrink-0 border rounded p-0 overflow-hidden product-modal-thumb @(i == 0 ? "border-2 thumb-active" : "border-secondary")" style="width:60px;height:60px;border-radius:10px;" data-bs-target="#productModalGallery" data-bs-slide-to="@i">
+                            <img src="@Model.ImageUrls[i]" class="w-100 h-100 object-fit-cover" alt="" onerror="this.src='/images/placeholder.svg'" style="object-fit:cover"/>
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-md-7">
+            <h2 class="h4 mb-2 fw-bold">@Model.Name</h2>
+            <p class="mb-2">
+                <span class="product-price fs-4">Rs @displayPrice.ToString("N0")</span>
+                @if (Model.DiscountPrice.HasValue)
+                {
+                    <span class="product-price-old ms-2">Rs @Model.SalePrice.ToString("N0")</span>
+                    <span class="text-success small ms-1">(with membership discount)</span>
+                }
+            </p>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <form class="js-add-to-cart-form d-inline" method="post" data-product-id="@Model.Id" data-quantity="1">
+                        <button type="submit" class="btn btn-shopwala">Add to Cart</button>
+                    </form>
+                    <a asp-controller="Shop" asp-action="BuyNow" asp-route-id="@Model.Id" class="btn btn-secondary">Buy Now</a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Shop", new { id = Model.Id })" class="btn btn-shopwala">Add to Cart</a>
+                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("BuyNow", "Shop", new { id = Model.Id })" class="btn btn-secondary">Buy Now</a>
+                }
+            </div>
+            <p class="small text-muted mb-3"><i class="bi bi-truck me-1"></i>Shipping to: Karachi, Block 4</p>
+            <p class="small text-muted mb-3"><i class="bi bi-geo-alt me-1"></i>Estimated delivery in 2-3 days</p>
+
+            <div class="mt-4">
+                <h6 class="fw-bold mb-2">Product Description</h6>
+                <p class="small text-muted">@(string.IsNullOrEmpty(Model.Description) ? "Premium quality product." : Model.Description)</p>
+            </div>
+            <div class="mt-4">
+                <h6 class="fw-bold mb-2">Customer Reviews</h6>
+                <div class="d-flex align-items-center gap-2 small">
+                    <span class="text-warning"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
+                    <span class="text-muted">5.0</span>
+                </div>
+                <p class="small text-muted mt-1 mb-0"><i class="bi bi-check-circle-fill text-success me-1"></i>Verified reviews</p>
+            </div>
+            <p class="small mt-3 mb-0"><a asp-controller="Shop" asp-action="Details" asp-route-id="@Model.Id" class="text-primary">View full page</a></p>
+        </div>
+    </div>
+</div>

@@ -47,7 +47,7 @@ public class OrdersController : Controller
         return View(orders);
     }
 
-    public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Details(long id, CancellationToken cancellationToken = default)
     {
         var order = await _orderRepo.Query()
             .Include(o => o.User)
@@ -65,7 +65,7 @@ public class OrdersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateStatus(int id, OrderStatus status, string? notes, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> UpdateStatus(long id, OrderStatus status, string? notes, CancellationToken cancellationToken = default)
     {
         var order = await _orderRepo.GetByIdAsync(id, cancellationToken);
         if (order == null) return NotFound();
@@ -87,7 +87,7 @@ public class OrdersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AssignDelivery(int id, string deliveryBoyName, string phoneNumber, string vehicleType, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> AssignDelivery(long id, string deliveryBoyName, string phoneNumber, string vehicleType, CancellationToken cancellationToken = default)
     {
         var order = await _orderRepo.GetByIdAsync(id, cancellationToken);
         if (order == null) return NotFound();
@@ -117,7 +117,7 @@ public class OrdersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> MarkDelivered(int id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> MarkDelivered(long id, CancellationToken cancellationToken = default)
     {
         var delivery = await _deliveryRepo.FirstOrDefaultAsync(d => d.OrderId == id, cancellationToken);
         if (delivery != null)
@@ -146,7 +146,7 @@ public class OrdersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CancelOrder(int id, string? notes, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CancelOrder(long id, string? notes, CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
         var ok = await _orderService.CancelOrderAsync(id, userId, isAdmin: true, notes, cancellationToken);
@@ -156,7 +156,7 @@ public class OrdersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateDeliveryTime(int id, string preferredDeliveryTime, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> UpdateDeliveryTime(long id, string preferredDeliveryTime, CancellationToken cancellationToken = default)
     {
         var order = await _orderRepo.GetByIdAsync(id, cancellationToken);
         if (order == null) return NotFound();

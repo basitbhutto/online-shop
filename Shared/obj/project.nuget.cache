@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "97Sh7OeXtpI=",
+  "dgSpecHash": "ayIdFiCLzk4=",
   "success": true,
-  "projectFilePath": "D:\\Project\\online-shop\\online-shop\\Shared\\Shared.csproj",
+  "projectFilePath": "D:\\Project\\online-shop\\Shared\\Shared.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Noman Traders\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.11\\microsoft.aspnetcore.cryptography.internal.8.0.11.nupkg.sha512",
     "C:\\Users\\Noman Traders\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\8.0.11\\microsoft.aspnetcore.cryptography.keyderivation.8.0.11.nupkg.sha512",

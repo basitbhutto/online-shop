@@ -1,11 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Entities;
 
 public class OrderItem
 {
-    public int Id { get; set; }
-    public int OrderId { get; set; }
-    public int ProductId { get; set; }
-    public int? VariantId { get; set; }
+    [Key]
+    public long Id { get; set; }
+    public long OrderId { get; set; }
+    public long ProductId { get; set; }
+    public long? VariantId { get; set; }
     public int Quantity { get; set; }
     public decimal Price { get; set; }
 

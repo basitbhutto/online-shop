@@ -37,7 +37,7 @@ public class OrdersController : Controller
         return View(model);
     }
 
-    public async Task<IActionResult> Details(int id, CancellationToken ct = default)
+    public async Task<IActionResult> Details(long id, CancellationToken ct = default)
     {
         var userId = _userManager.GetUserId(User);
         if (userId == null) return RedirectToAction("Login", "Account", new { area = "" });

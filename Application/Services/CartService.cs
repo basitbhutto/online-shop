@@ -8,9 +8,9 @@ public interface ICartService
 {
     Task<IReadOnlyList<CartItem>> GetCartAsync(string userId, CancellationToken cancellationToken = default);
     Task<int> GetCartCountAsync(string userId, CancellationToken cancellationToken = default);
-    Task<CartItem?> AddToCartAsync(string userId, int productId, int? variantId, int quantity, CancellationToken cancellationToken = default);
-    Task<bool> RemoveFromCartAsync(string userId, int cartItemId, CancellationToken cancellationToken = default);
-    Task<bool> UpdateQuantityAsync(string userId, int cartItemId, int quantity, CancellationToken cancellationToken = default);
+    Task<CartItem?> AddToCartAsync(string userId, long productId, long? variantId, int quantity, CancellationToken cancellationToken = default);
+    Task<bool> RemoveFromCartAsync(string userId, long cartItemId, CancellationToken cancellationToken = default);
+    Task<bool> UpdateQuantityAsync(string userId, long cartItemId, int quantity, CancellationToken cancellationToken = default);
     Task ClearCartAsync(string userId, CancellationToken cancellationToken = default);
 }
 
@@ -44,7 +44,7 @@ public class CartService : ICartService
             .SumAsync(c => c.Quantity, cancellationToken);
     }
 
-    public async Task<CartItem?> AddToCartAsync(string userId, int productId, int? variantId, int quantity, CancellationToken cancellationToken = default)
+    public async Task<CartItem?> AddToCartAsync(string userId, long productId, long? variantId, int quantity, CancellationToken cancellationToken = default)
     {
         var existing = await _cartRepo.FirstOrDefaultAsync(
             c => c.UserId == userId && c.ProductId == productId && c.VariantId == variantId, cancellationToken);
@@ -65,7 +65,7 @@ public class CartService : ICartService
         return existing;
     }
 
-    public async Task<bool> RemoveFromCartAsync(string userId, int cartItemId, CancellationToken cancellationToken = default)
+    public async Task<bool> RemoveFromCartAsync(string userId, long cartItemId, CancellationToken cancellationToken = default)
     {
         var item = await _cartRepo.FirstOrDefaultAsync(c => c.Id == cartItemId && c.UserId == userId, cancellationToken);
         if (item == null) return false;
@@ -74,7 +74,7 @@ public class CartService : ICartService
         return true;
     }
 
-    public async Task<bool> UpdateQuantityAsync(string userId, int cartItemId, int quantity, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateQuantityAsync(string userId, long cartItemId, int quantity, CancellationToken cancellationToken = default)
     {
         var item = await _cartRepo.FirstOrDefaultAsync(c => c.Id == cartItemId && c.UserId == userId, cancellationToken);
         if (item == null || quantity <= 0) return false;

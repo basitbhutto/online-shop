@@ -14,8 +14,8 @@ public class AttributesController : ControllerBase
         _attributeService = attributeService;
     }
 
-    [HttpGet("{categoryId:int}")]
-    public async Task<IActionResult> GetByCategory(int categoryId, CancellationToken cancellationToken = default)
+    [HttpGet("{categoryId}")]
+    public async Task<IActionResult> GetByCategory(long categoryId, CancellationToken cancellationToken = default)
     {
         var attributes = await _attributeService.GetAttributesByCategoryIdAsync(categoryId, cancellationToken);
         return Ok(attributes);

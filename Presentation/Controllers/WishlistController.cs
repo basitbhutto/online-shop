@@ -33,7 +33,8 @@ public class WishlistController : Controller
             w.Product.SalePrice,
             w.Product.Stock,
             w.Product.Images?.OrderBy(i => i.SortOrder).FirstOrDefault()?.ImageUrl,
-            true
+            true,
+            null
         )).ToList();
 
         return View(model);

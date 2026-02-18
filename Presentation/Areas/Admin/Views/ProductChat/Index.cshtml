@@ -113,7 +113,9 @@ $(function() {
         } else {
             fetch('/api/chat/thread/' + currentThreadId + '/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: txt }), credentials: 'include' })
                 .then(r => r.json())
-                .then(function(d) { if (d) appendMsg(d.message, d.isFromAdmin, d.createdAt); });
+                .then(function(d) {
+                    if (d && (!chatConnection || chatConnection.state !== 1)) appendMsg(d.message, d.isFromAdmin, d.createdAt);
+                });
         }
     });
     $('#chatInput').on('keypress', function(e) { if (e.which === 13) { e.preventDefault(); $('#chatSendBtn').click(); } });

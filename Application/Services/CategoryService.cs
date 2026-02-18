@@ -8,14 +8,14 @@ namespace Application.Services;
 public interface ICategoryService
 {
     Task<IReadOnlyList<Category>> GetRootCategoriesAsync(CancellationToken cancellationToken = default);
-    Task<IReadOnlyList<Category>> GetChildCategoriesAsync(int parentId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Category>> GetChildCategoriesAsync(long parentId, CancellationToken cancellationToken = default);
     Task<Category?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default);
-    Task<Category?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<Category?> GetByIdAsync(long id, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Category>> GetAllWithHierarchyAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Category>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<Category> CreateAsync(string name, int? parentId, string? imageUrl, CancellationToken cancellationToken = default);
-    Task UpdateAsync(int id, string name, string? imageUrl, EntityStatus status, CancellationToken cancellationToken = default);
-    Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+    Task<Category> CreateAsync(string name, long? parentId, string? imageUrl, CancellationToken cancellationToken = default);
+    Task UpdateAsync(long id, string name, string? imageUrl, EntityStatus status, CancellationToken cancellationToken = default);
+    Task DeleteAsync(long id, CancellationToken cancellationToken = default);
 }
 
 public class CategoryService : ICategoryService
@@ -37,7 +37,7 @@ public class CategoryService : ICategoryService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Category>> GetChildCategoriesAsync(int parentId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Category>> GetChildCategoriesAsync(long parentId, CancellationToken cancellationToken = default)
     {
         return await _categoryRepo.Query()
             .Where(c => c.ParentId == parentId && c.Status == EntityStatus.Active)
@@ -52,7 +52,7 @@ public class CategoryService : ICategoryService
             .FirstOrDefaultAsync(c => c.Slug == slug && c.Status == EntityStatus.Active, cancellationToken);
     }
 
-    public async Task<Category?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Category?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
         return await _categoryRepo.Query()
             .Include(c => c.CategoryAttributes)
@@ -78,7 +78,7 @@ public class CategoryService : ICategoryService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Category> CreateAsync(string name, int? parentId, string? imageUrl, CancellationToken cancellationToken = default)
+    public async Task<Category> CreateAsync(string name, long? parentId, string? imageUrl, CancellationToken cancellationToken = default)
     {
         var slug = name.ToLowerInvariant().Replace(" ", "-");
         var slugBase = slug;
@@ -91,7 +91,7 @@ public class CategoryService : ICategoryService
         return cat;
     }
 
-    public async Task UpdateAsync(int id, string name, string? imageUrl, EntityStatus status, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(long id, string name, string? imageUrl, EntityStatus status, CancellationToken cancellationToken = default)
     {
         var cat = await _categoryRepo.GetByIdAsync(id, cancellationToken);
         if (cat == null) return;
@@ -103,7 +103,7 @@ public class CategoryService : ICategoryService
         await _uow.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(long id, CancellationToken cancellationToken = default)
     {
         var cat = await _categoryRepo.GetByIdAsync(id, cancellationToken);
         if (cat != null)

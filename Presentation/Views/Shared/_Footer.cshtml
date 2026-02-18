@@ -1,52 +1,52 @@
 <footer class="shopwala-footer">
-    <div class="container py-5">
-        <div class="row g-4">
+    <div class="container">
+        <div class="row">
             <div class="col-12 col-md-4">
-                <div class="d-flex align-items-center mb-3">
-                    <img src="~/images/logo-white.png" alt="Shopwala" class="footer-logo me-2" style="height: 36px; max-width: 120px; object-fit: contain;" onerror="this.style.display='none'" />
-                    <span class="fw-bold text-white fs-5">Shopwala</span>
+                <div id="footerBrand" class="footer-brand-wrap">
+                    <img src="@Url.Content("~/images/logo-white.png")" alt="Shopwala" class="footer-logo" data-fallback="@Url.Content("~/images/logo-while.png.jpeg")" onerror="var t=this,f=t.getAttribute('data-fallback');if(f){t.onerror=null;t.src=f;t.onerror=function(){t.style.display='none';var b=document.getElementById('footerBrand');if(b)b.classList.add('logo-fallback');}}else{t.style.display='none';var b=document.getElementById('footerBrand');if(b)b.classList.add('logo-fallback');}" />
+                    <span class="footer-brand-text">Shopwala</span>
                 </div>
-                <p class="text-white-50 small mb-0">Your trusted online shopping destination in Karachi. Quality products, fast delivery.</p>
+                <p class="text-white-50 small mb-0">Your trusted online shopping destination in Karachi.</p>
             </div>
             <div class="col-6 col-md-2">
-                <h6 class="text-white fw-semibold mb-3">Shop</h6>
+                <h6 class="text-white fw-semibold">Shop</h6>
                 <ul class="list-unstyled small">
-                    <li class="mb-2"><a asp-controller="Shop" asp-action="Index" class="text-white-50 text-decoration-none">All Products</a></li>
-                    <li class="mb-2"><a asp-controller="Home" asp-action="Index" class="text-white-50 text-decoration-none">Home</a></li>
+                    <li><a asp-controller="Shop" asp-action="Index" class="text-white-50 text-decoration-none">All Products</a></li>
+                    <li><a asp-controller="Home" asp-action="Index" class="text-white-50 text-decoration-none">Home</a></li>
                 </ul>
             </div>
             <div class="col-6 col-md-2">
-                <h6 class="text-white fw-semibold mb-3">Account</h6>
+                <h6 class="text-white fw-semibold">Account</h6>
                 <ul class="list-unstyled small">
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         @if (User.IsInRole("Buyer"))
                         {
-                            <li class="mb-2"><a asp-area="Buyer" asp-controller="Orders" asp-action="Index" class="text-white-50 text-decoration-none">My Orders</a></li>
-                            <li class="mb-2"><a asp-area="Buyer" asp-controller="Dashboard" asp-action="Index" class="text-white-50 text-decoration-none">My Account</a></li>
+                            <li><a asp-area="Buyer" asp-controller="Orders" asp-action="Index" class="text-white-50 text-decoration-none">My Orders</a></li>
+                            <li><a asp-area="Buyer" asp-controller="Dashboard" asp-action="Index" class="text-white-50 text-decoration-none">My Account</a></li>
                         }
                         @if (User.IsInRole("SuperAdmin") || User.IsInRole("AdminStaff"))
                         {
-                            <li class="mb-2"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="text-white-50 text-decoration-none">Admin</a></li>
+                            <li><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="text-white-50 text-decoration-none">Admin</a></li>
                         }
                     }
                     else
                     {
-                        <li class="mb-2"><a asp-controller="Account" asp-action="Login" class="text-white-50 text-decoration-none">Login</a></li>
-                        <li class="mb-2"><a asp-controller="Account" asp-action="Register" class="text-white-50 text-decoration-none">Register</a></li>
+                        <li><a asp-controller="Account" asp-action="Login" class="text-white-50 text-decoration-none">Login</a></li>
+                        <li><a asp-controller="Account" asp-action="Register" class="text-white-50 text-decoration-none">Register</a></li>
                     }
                 </ul>
             </div>
             <div class="col-12 col-md-4">
-                <h6 class="text-white fw-semibold mb-3">Delivery</h6>
-                <p class="text-white-50 small mb-3">We deliver across Karachi. Order now for same-day or next-day delivery.</p>
+                <h6 class="text-white fw-semibold">Delivery</h6>
+                <p class="text-white-50 small mb-2">We deliver across Karachi. Same-day or next-day delivery.</p>
                 <div class="d-flex gap-2">
-                    <a href="#" class="text-white-50"><i class="bi bi-facebook fs-5"></i></a>
-                    <a href="#" class="text-white-50"><i class="bi bi-instagram fs-5"></i></a>
+                    <a href="#" class="text-white-50"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-white-50"><i class="bi bi-instagram"></i></a>
                 </div>
             </div>
         </div>
-        <hr class="border-secondary my-4" />
+        <hr class="border-secondary" />
         <div class="text-center text-white-50 small">&copy; @DateTime.UtcNow.Year Shopwala - Karachi, Pakistan</div>
     </div>
 </footer>

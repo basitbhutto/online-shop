@@ -4245,17 +4245,17 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Project\\online-shop\\online-shop\\Infrastructure\\Infrastructure.csproj",
+      "projectUniqueName": "D:\\Project\\online-shop\\Infrastructure\\Infrastructure.csproj",
       "projectName": "Infrastructure",
-      "projectPath": "D:\\Project\\online-shop\\online-shop\\Infrastructure\\Infrastructure.csproj",
+      "projectPath": "D:\\Project\\online-shop\\Infrastructure\\Infrastructure.csproj",
       "packagesPath": "C:\\Users\\Noman Traders\\.nuget\\packages\\",
-      "outputPath": "D:\\Project\\online-shop\\online-shop\\Infrastructure\\obj\\",
+      "outputPath": "D:\\Project\\online-shop\\Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "D:\\Project\\online-shop\\online-shop\\NuGet.Config",
+        "D:\\Project\\online-shop\\NuGet.Config",
         "C:\\Users\\Noman Traders\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -4272,14 +4272,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Project\\online-shop\\online-shop\\Application\\Application.csproj": {
-              "projectPath": "D:\\Project\\online-shop\\online-shop\\Application\\Application.csproj"
+            "D:\\Project\\online-shop\\Application\\Application.csproj": {
+              "projectPath": "D:\\Project\\online-shop\\Application\\Application.csproj"
             },
-            "D:\\Project\\online-shop\\online-shop\\Domain\\Domain.csproj": {
-              "projectPath": "D:\\Project\\online-shop\\online-shop\\Domain\\Domain.csproj"
+            "D:\\Project\\online-shop\\Domain\\Domain.csproj": {
+              "projectPath": "D:\\Project\\online-shop\\Domain\\Domain.csproj"
             },
-            "D:\\Project\\online-shop\\online-shop\\Shared\\Shared.csproj": {
-              "projectPath": "D:\\Project\\online-shop\\online-shop\\Shared\\Shared.csproj"
+            "D:\\Project\\online-shop\\Shared\\Shared.csproj": {
+              "projectPath": "D:\\Project\\online-shop\\Shared\\Shared.csproj"
             }
           }
         }

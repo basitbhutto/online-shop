@@ -1,0 +1,43 @@
+@model Presentation.ViewModels.Account.LoginViewModel
+@{
+    var model = Model ?? new Presentation.ViewModels.Account.LoginViewModel();
+    var returnUrl = ViewData["ReturnUrl"] as string ?? Context.Request.Path.ToString();
+}
+<div class="modal fade modal-glass" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0 position-relative">
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+                <div class="w-100 text-center">
+                    <a asp-controller="Home" asp-action="Index" class="text-decoration-none d-inline-flex align-items-center mb-2">
+                        <i class="bi bi-cart3 fs-3 me-2" style="color: var(--shopwala-primary);"></i>
+                        <span class="shopwala-brand fs-3">Shopwala</span>
+                    </a>
+                    <h2 class="modal-title w-100 fw-bold mt-2 mb-1" id="loginModalLabel">Welcome Back</h2>
+                    <p class="text-muted small mb-0">Sign in to your Shopwala account</p>
+                </div>
+            </div>
+            <div class="modal-body pt-3 pb-4">
+                <form asp-controller="Account" asp-action="Login" method="post">
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <input asp-for="Email" class="form-control form-control-lg" placeholder="user@example.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input asp-for="Password" class="form-control form-control-lg" placeholder="••••••••" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label"></label>
+                    </div>
+                    <button type="submit" class="btn btn-shopwala btn-lg w-100 py-2">Login</button>
+                </form>
+                <p class="mt-4 text-center mb-0 small">Don't have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerModal" class="fw-semibold text-primary">Register</a></p>
+            </div>
+        </div>
+    </div>
+</div>

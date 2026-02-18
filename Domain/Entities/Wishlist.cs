@@ -1,10 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Entities;
 
 public class Wishlist
 {
-    public int Id { get; set; }
+    [Key]
+    public long Id { get; set; }
     public string UserId { get; set; } = string.Empty;
-    public int ProductId { get; set; }
+    public long ProductId { get; set; }
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
     public ApplicationUser User { get; set; } = null!;

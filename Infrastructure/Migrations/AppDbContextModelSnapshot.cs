@@ -45,8 +45,8 @@ namespace Infrastructure.Migrations
                     b.Property<string>("PageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<long?>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
@@ -147,14 +147,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.AttributeOption", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("AttributeId")
-                        .HasColumnType("int");
+                    b.Property<long>("AttributeId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -169,14 +169,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.CartItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -185,8 +185,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("VariantId")
-                        .HasColumnType("int");
+                    b.Property<long?>("VariantId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -201,11 +201,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -217,8 +217,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("int");
+                    b.Property<long?>("ParentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Slug")
                         .IsRequired()
@@ -238,11 +238,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.CategoryAttribute", b =>
                 {
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
 
-                    b.Property<int>("AttributeId")
-                        .HasColumnType("int");
+                    b.Property<long>("AttributeId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("CategoryId", "AttributeId");
 
@@ -253,11 +253,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.DeliveryAssignment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("AssignedDate")
                         .HasColumnType("datetime2");
@@ -269,8 +269,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -288,13 +288,47 @@ namespace Infrastructure.Migrations
                     b.ToTable("DeliveryAssignments");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Order", b =>
+            modelBuilder.Entity("Domain.Entities.Location", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("FullPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("Latitude")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("ParentId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Locations");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Order", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -336,26 +370,26 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.OrderItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VariantId")
-                        .HasColumnType("int");
+                    b.Property<long?>("VariantId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -370,11 +404,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.OrderStatusHistory", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ChangedByUserId")
                         .HasColumnType("nvarchar(max)");
@@ -385,8 +419,8 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -400,14 +434,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -417,6 +451,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal?>("DiscountPrice")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<long?>("LocationId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -442,6 +479,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("LocationId");
+
                     b.HasIndex("SKU")
                         .IsUnique();
 
@@ -450,11 +489,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductAttribute", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("FieldType")
                         .HasColumnType("int");
@@ -473,17 +512,17 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductAttributeValue", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("AttributeId")
-                        .HasColumnType("int");
+                    b.Property<long>("AttributeId")
+                        .HasColumnType("bigint");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -500,11 +539,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductChatMessage", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -519,8 +556,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ThreadId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ThreadId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -537,11 +574,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductChatThread", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BuyerId")
                         .HasColumnType("nvarchar(450)");
@@ -550,8 +585,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -565,18 +600,18 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductImage", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");
@@ -590,14 +625,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductSpecification", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("SpecKey")
                         .IsRequired()
@@ -616,17 +651,17 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductVariant", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal?>("PriceOverride")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("SKU")
                         .HasColumnType("nvarchar(max)");
@@ -650,17 +685,17 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Wishlist", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -900,6 +935,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Location", b =>
+                {
+                    b.HasOne("Domain.Entities.Location", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("Domain.Entities.Order", b =>
                 {
                     b.HasOne("Domain.Entities.ApplicationUser", "User")
@@ -955,7 +1000,14 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Location", "Location")
+                        .WithMany("Products")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Category");
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("Domain.Entities.ProductAttributeValue", b =>
@@ -1131,6 +1183,13 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("CategoryAttributes");
 
+                    b.Navigation("Children");
+
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Location", b =>
+                {
                     b.Navigation("Children");
 
                     b.Navigation("Products");

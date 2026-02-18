@@ -17,7 +17,7 @@ public class WishlistController : ControllerBase
 
     [HttpPost("{productId:int}")]
     [Authorize]
-    public async Task<IActionResult> Add(int productId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Add(long productId, CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
         await _wishlistService.AddToWishlistAsync(userId, productId, cancellationToken);
@@ -26,7 +26,7 @@ public class WishlistController : ControllerBase
 
     [HttpDelete("{productId:int}")]
     [Authorize]
-    public async Task<IActionResult> Remove(int productId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Remove(long productId, CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
         await _wishlistService.RemoveFromWishlistAsync(userId, productId, cancellationToken);

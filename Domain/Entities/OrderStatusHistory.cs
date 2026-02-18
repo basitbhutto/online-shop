@@ -1,9 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Entities;
 
 public class OrderStatusHistory
 {
-    public int Id { get; set; }
-    public int OrderId { get; set; }
+    [Key]
+    public long Id { get; set; }
+    public long OrderId { get; set; }
     public int Status { get; set; } // OrderStatus enum as int
     public string? ChangedByUserId { get; set; }
     public DateTime ChangedDate { get; set; } = DateTime.UtcNow;

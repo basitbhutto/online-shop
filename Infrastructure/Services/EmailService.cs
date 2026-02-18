@@ -55,7 +55,7 @@ public class EmailService : IEmailService
         return SendEmailAsync(to, "Verify your email - Shopwala", html, cancellationToken);
     }
 
-    public Task SendOrderConfirmationAsync(string to, string customerName, int orderId, decimal total, CancellationToken cancellationToken = default)
+    public Task SendOrderConfirmationAsync(string to, string customerName, long orderId, decimal total, CancellationToken cancellationToken = default)
     {
         var html = $@"
 <!DOCTYPE html>

@@ -1,7 +1,7 @@
 namespace Presentation.ViewModels.Shop;
 
 public record ProductDetailViewModel(
-    int Id,
+    long Id,
     string Name,
     string SKU,
     string CategoryName,
@@ -20,4 +20,4 @@ public record ProductSpecificationViewModel(string Key, string Value);
 
 public record ProductAttributeDisplayViewModel(string Name, string Value);
 
-public record ProductVariantViewModel(int Id, string Combination, int Stock, decimal Price, string? SKU);
+public record ProductVariantViewModel(long Id, string Combination, int Stock, decimal Price, string? SKU);

@@ -1,9 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Entities;
 
 public class DeliveryAssignment
 {
-    public int Id { get; set; }
-    public int OrderId { get; set; }
+    [Key]
+    public long Id { get; set; }
+    public long OrderId { get; set; }
     public string DeliveryBoyName { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string VehicleType { get; set; } = string.Empty;

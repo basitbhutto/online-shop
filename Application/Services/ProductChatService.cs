@@ -6,12 +6,12 @@ namespace Application.Services;
 
 public interface IProductChatService
 {
-    Task<ProductChatThread?> GetOrCreateThreadAsync(int productId, string buyerUserId, CancellationToken ct = default);
-    Task<IReadOnlyList<ProductChatMessage>> GetMessagesAsync(int threadId, string userId, bool isAdmin, CancellationToken ct = default);
-    Task<ProductChatMessage?> SendMessageAsync(int threadId, string userId, string message, bool isFromAdmin, CancellationToken ct = default);
+    Task<ProductChatThread?> GetOrCreateThreadAsync(long productId, string buyerUserId, CancellationToken ct = default);
+    Task<IReadOnlyList<ProductChatMessage>> GetMessagesAsync(Guid threadId, string userId, bool isAdmin, CancellationToken ct = default);
+    Task<ProductChatMessage?> SendMessageAsync(Guid threadId, string userId, string message, bool isFromAdmin, CancellationToken ct = default);
     Task<int> GetUnreadCountForAdminAsync(CancellationToken ct = default);
     Task<int> GetUnreadCountForBuyerAsync(string userId, CancellationToken ct = default);
-    Task MarkThreadAsReadAsync(int threadId, string userId, bool isAdmin, CancellationToken ct = default);
+    Task MarkThreadAsReadAsync(Guid threadId, string userId, bool isAdmin, CancellationToken ct = default);
     Task<IReadOnlyList<(ProductChatThread Thread, int UnreadCount)>> GetAdminThreadsAsync(CancellationToken ct = default);
 }
 
@@ -28,17 +28,17 @@ public class ProductChatService : IProductChatService
         _uow = uow;
     }
 
-    public async Task<ProductChatThread?> GetOrCreateThreadAsync(int productId, string buyerUserId, CancellationToken ct = default)
+    public async Task<ProductChatThread?> GetOrCreateThreadAsync(long productId, string buyerUserId, CancellationToken ct = default)
     {
         var thread = await _threadRepo.FirstOrDefaultAsync(t => t.ProductId == productId && t.BuyerUserId == buyerUserId, ct);
         if (thread != null) return thread;
-        thread = new ProductChatThread { ProductId = productId, BuyerUserId = buyerUserId };
+        thread = new ProductChatThread { Id = Guid.NewGuid(), ProductId = productId, BuyerUserId = buyerUserId };
         await _threadRepo.AddAsync(thread, ct);
         await _uow.SaveChangesAsync(ct);
         return thread;
     }
 
-    public async Task<IReadOnlyList<ProductChatMessage>> GetMessagesAsync(int threadId, string userId, bool isAdmin, CancellationToken ct = default)
+    public async Task<IReadOnlyList<ProductChatMessage>> GetMessagesAsync(Guid threadId, string userId, bool isAdmin, CancellationToken ct = default)
     {
         var thread = await _threadRepo.Query()
             .Include(t => t.Messages.OrderBy(m => m.CreatedAt))
@@ -48,13 +48,13 @@ public class ProductChatService : IProductChatService
         return thread.Messages.OrderBy(m => m.CreatedAt).ToList();
     }
 
-    public async Task<ProductChatMessage?> SendMessageAsync(int threadId, string userId, string message, bool isFromAdmin, CancellationToken ct = default)
+    public async Task<ProductChatMessage?> SendMessageAsync(Guid threadId, string userId, string message, bool isFromAdmin, CancellationToken ct = default)
     {
         var thread = await _threadRepo.Query().FirstOrDefaultAsync(t => t.Id == threadId, ct);
         if (thread == null) return null;
         if (!isFromAdmin && thread.BuyerUserId != userId) return null;
         if (string.IsNullOrWhiteSpace(message)) return null;
-        var msg = new ProductChatMessage { ThreadId = threadId, UserId = userId, Message = message.Trim(), IsFromAdmin = isFromAdmin };
+        var msg = new ProductChatMessage { Id = Guid.NewGuid(), ThreadId = threadId, UserId = userId, Message = message.Trim(), IsFromAdmin = isFromAdmin };
         await _msgRepo.AddAsync(msg, ct);
         await _uow.SaveChangesAsync(ct);
         return msg;
@@ -75,7 +75,7 @@ public class ProductChatService : IProductChatService
             .CountAsync(ct);
     }
 
-    public async Task MarkThreadAsReadAsync(int threadId, string userId, bool isAdmin, CancellationToken ct = default)
+    public async Task MarkThreadAsReadAsync(Guid threadId, string userId, bool isAdmin, CancellationToken ct = default)
     {
         var thread = await _threadRepo.GetByIdAsync(threadId, ct);
         if (thread == null) return;

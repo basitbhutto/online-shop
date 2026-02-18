@@ -71,7 +71,7 @@ public class CategoriesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Edit(int id, CancellationToken ct)
+    public async Task<IActionResult> Edit(long id, CancellationToken ct)
     {
         var cat = await _categoryService.GetByIdAsync(id, ct);
         if (cat == null) return NotFound();
@@ -113,7 +113,7 @@ public class CategoriesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(int id, CancellationToken ct)
+    public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
         await _categoryService.DeleteAsync(id, ct);
         TempData["Success"] = "Category deleted.";

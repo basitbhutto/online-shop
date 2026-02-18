@@ -1,10 +1,12 @@
 using Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities;
 
 public class ProductAttribute
 {
-    public int Id { get; set; }
+    [Key]
+    public long Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public AttributeFieldType FieldType { get; set; }
     public bool IsRequired { get; set; }

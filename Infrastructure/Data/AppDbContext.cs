@@ -32,6 +32,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
     public DbSet<ProductChatThread> ProductChatThreads => Set<ProductChatThread>();
     public DbSet<ProductChatMessage> ProductChatMessages => Set<ProductChatMessage>();
+    public DbSet<Location> Locations => Set<Location>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -47,11 +48,26 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
+        builder.Entity<Location>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => x.ParentId);
+            e.HasOne(x => x.Parent)
+                .WithMany(x => x.Children)
+                .HasForeignKey(x => x.ParentId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
         builder.Entity<Product>(e =>
         {
             e.HasKey(x => x.Id);
             e.HasIndex(x => x.SKU).IsUnique();
             e.HasIndex(x => x.CategoryId);
+            e.HasIndex(x => x.LocationId);
+            e.HasOne(x => x.Location)
+                .WithMany(x => x.Products)
+                .HasForeignKey(x => x.LocationId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         builder.Entity<ProductVariant>(e =>

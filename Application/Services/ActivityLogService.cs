@@ -6,7 +6,7 @@ namespace Application.Services;
 
 public interface IActivityLogService
 {
-    Task LogAsync(ActivityActionType actionType, string? userId, string? ipAddress, string? device, string? browser, string? pageUrl, int? productId, CancellationToken cancellationToken = default);
+    Task LogAsync(ActivityActionType actionType, string? userId, string? ipAddress, string? device, string? browser, string? pageUrl, long? productId, CancellationToken cancellationToken = default);
 }
 
 public class ActivityLogService : IActivityLogService
@@ -20,7 +20,7 @@ public class ActivityLogService : IActivityLogService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task LogAsync(ActivityActionType actionType, string? userId, string? ipAddress, string? device, string? browser, string? pageUrl, int? productId, CancellationToken cancellationToken = default)
+    public async Task LogAsync(ActivityActionType actionType, string? userId, string? ipAddress, string? device, string? browser, string? pageUrl, long? productId, CancellationToken cancellationToken = default)
     {
         await _logRepo.AddAsync(new ActivityLog
         {

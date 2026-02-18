@@ -21,7 +21,7 @@ public class OrdersController : Controller
         return View(orders);
     }
 
-    public async Task<IActionResult> Details(int id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Details(long id, CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
         var order = await _orderService.GetOrderByIdAsync(id, userId, cancellationToken);
@@ -31,7 +31,7 @@ public class OrdersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Cancel(int id, string? notes, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Cancel(long id, string? notes, CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
         var ok = await _orderService.CancelOrderAsync(id, userId, isAdmin: false, notes, cancellationToken);

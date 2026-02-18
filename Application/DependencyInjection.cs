@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +17,7 @@ public static class DependencyInjection
         services.AddScoped<IActivityLogService, ActivityLogService>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IProductChatService, ProductChatService>();
+        services.AddScoped<ILocationService, LocationService>();
         return services;
     }
 }

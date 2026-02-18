@@ -8,10 +8,10 @@ namespace Application.Services;
 
 public interface IOrderService
 {
-    Task<Order?> CreateOrderAsync(string userId, string shippingAddress, string phoneNumber, string? preferredDeliveryTime, List<(int ProductId, int? VariantId, int Quantity, decimal Price)> items, CancellationToken cancellationToken = default);
-    Task<Order?> GetOrderByIdAsync(int orderId, string? userId, CancellationToken cancellationToken = default);
+    Task<Order?> CreateOrderAsync(string userId, string shippingAddress, string phoneNumber, string? preferredDeliveryTime, List<(long ProductId, long? VariantId, int Quantity, decimal Price)> items, CancellationToken cancellationToken = default);
+    Task<Order?> GetOrderByIdAsync(long orderId, string? userId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Order>> GetUserOrdersAsync(string userId, CancellationToken cancellationToken = default);
-    Task<bool> CancelOrderAsync(int orderId, string userId, bool isAdmin, string? notes, CancellationToken cancellationToken = default);
+    Task<bool> CancelOrderAsync(long orderId, string userId, bool isAdmin, string? notes, CancellationToken cancellationToken = default);
 }
 
 public class OrderService : IOrderService
@@ -33,7 +33,7 @@ public class OrderService : IOrderService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Order?> CreateOrderAsync(string userId, string shippingAddress, string phoneNumber, string? preferredDeliveryTime, List<(int ProductId, int? VariantId, int Quantity, decimal Price)> items, CancellationToken cancellationToken = default)
+    public async Task<Order?> CreateOrderAsync(string userId, string shippingAddress, string phoneNumber, string? preferredDeliveryTime, List<(long ProductId, long? VariantId, int Quantity, decimal Price)> items, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(shippingAddress)) return null;
         if (items.Count == 0) return null;
@@ -77,7 +77,7 @@ public class OrderService : IOrderService
         return order;
     }
 
-    public async Task<Order?> GetOrderByIdAsync(int orderId, string? userId, CancellationToken cancellationToken = default)
+    public async Task<Order?> GetOrderByIdAsync(long orderId, string? userId, CancellationToken cancellationToken = default)
     {
         var order = await _orderRepo.Query()
             .Include(o => o.OrderItems)
@@ -104,7 +104,7 @@ public class OrderService : IOrderService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<bool> CancelOrderAsync(int orderId, string userId, bool isAdmin, string? notes, CancellationToken cancellationToken = default)
+    public async Task<bool> CancelOrderAsync(long orderId, string userId, bool isAdmin, string? notes, CancellationToken cancellationToken = default)
     {
         var order = await _orderRepo.GetByIdAsync(orderId, cancellationToken);
         if (order == null) return false;

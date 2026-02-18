@@ -14,12 +14,14 @@ public class ProductsController : Controller
     private readonly IProductService _productService;
     private readonly ICategoryService _categoryService;
     private readonly IImageStorageService _imageStorage;
+    private readonly ILocationService _locationService;
 
-    public ProductsController(IProductService productService, ICategoryService categoryService, IImageStorageService imageStorage)
+    public ProductsController(IProductService productService, ICategoryService categoryService, IImageStorageService imageStorage, ILocationService locationService)
     {
         _productService = productService;
         _categoryService = categoryService;
         _imageStorage = imageStorage;
+        _locationService = locationService;
     }
 
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -69,7 +71,7 @@ public class ProductsController : Controller
                     if (url != null) imageUrls.Add(url);
                 }
             var specs = (vm.Specifications ?? new List<SpecItem>()).Where(x => !string.IsNullOrWhiteSpace(x.Key)).Select(x => (x.Key, x.Value)).ToList();
-            await _productService.CreateAsync(vm.Name!, vm.SKU!, vm.CategoryId, vm.PurchasePrice, vm.SalePrice, vm.DiscountPrice, vm.Stock, vm.Description, imageUrls, specs, ct);
+            await _productService.CreateAsync(vm.Name!, vm.SKU!, vm.CategoryId, vm.PurchasePrice, vm.SalePrice, vm.DiscountPrice, vm.Stock, vm.Description, vm.LocationId, imageUrls, specs, ct);
             TempData["Success"] = "Product created.";
             return RedirectToAction(nameof(Index));
         }
@@ -78,7 +80,7 @@ public class ProductsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Edit(int id, CancellationToken ct)
+    public async Task<IActionResult> Edit(long id, CancellationToken ct)
     {
         var p = await _productService.GetByIdForAdminAsync(id, ct);
         if (p == null) return NotFound();
@@ -97,7 +99,8 @@ public class ProductsController : Controller
             Status = p.Status.ToString(),
             ImageUrls = p.Images.OrderBy(i => i.SortOrder).Select(i => i.ImageUrl).ToList(),
             Specifications = p.Specifications.Select(s => new SpecItem { Key = s.SpecKey, Value = s.SpecValue }).ToList(),
-            Categories = categories.Select(c => new CategoryOption { Id = c.Id, Name = c.Name }).ToList()
+            Categories = categories.Select(c => new CategoryOption { Id = c.Id, Name = c.Name }).ToList(),
+            LocationId = p.LocationId
         });
     }
 
@@ -125,7 +128,7 @@ public class ProductsController : Controller
                 }
             var specs = (vm.Specifications ?? new List<SpecItem>()).Where(x => !string.IsNullOrWhiteSpace(x.Key)).Select(x => (x.Key, x.Value)).ToList();
             var status = Enum.TryParse<EntityStatus>(vm.Status, out var st) ? st : EntityStatus.Active;
-            await _productService.UpdateAsync(vm.Id, vm.Name!, vm.SKU ?? "", vm.CategoryId, vm.PurchasePrice, vm.SalePrice, vm.DiscountPrice, vm.Stock, vm.Description, status, imageUrls, specs, ct);
+            await _productService.UpdateAsync(vm.Id, vm.Name!, vm.SKU ?? "", vm.CategoryId, vm.PurchasePrice, vm.SalePrice, vm.DiscountPrice, vm.Stock, vm.Description, status, vm.LocationId, imageUrls, specs, ct);
             TempData["Success"] = "Product updated.";
             return RedirectToAction(nameof(Index));
         }
@@ -135,7 +138,7 @@ public class ProductsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(int id, CancellationToken ct)
+    public async Task<IActionResult> Delete(long id, CancellationToken ct)
     {
         await _productService.DeleteAsync(id, ct);
         TempData["Success"] = "Product deleted.";

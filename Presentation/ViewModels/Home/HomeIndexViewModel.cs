@@ -8,14 +8,14 @@ public class HomeIndexViewModel
 
 public class CategoryItem
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string Name { get; set; } = "";
     public string Slug { get; set; } = "";
 }
 
 public class ProductCardItem
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string Name { get; set; } = "";
     public string SKU { get; set; } = "";
     public string CategoryName { get; set; } = "";
@@ -24,4 +24,5 @@ public class ProductCardItem
     public int Stock { get; set; }
     public string? MainImageUrl { get; set; }
     public bool IsInWishlist { get; set; }
+    public string? LocationName { get; set; }
 }

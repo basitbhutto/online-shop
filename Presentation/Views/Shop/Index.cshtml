@@ -9,12 +9,14 @@
     <div class="row">
         <aside class="col-12 col-lg-3 mb-4 mb-lg-0 order-2 order-lg-1">
             <div class="filter-sidebar sticky-top" style="top: 90px;">
-                <h5 class="mb-3 fw-bold">Filters</h5>
+                <h5 class="fw-bold"><i class="bi bi-funnel me-2"></i>Filters</h5>
                 <form asp-action="Index" method="get" id="filterForm">
                     <input type="hidden" name="search" value="@Model.SearchTerm" />
                     <input type="hidden" name="page" value="1" />
-                    <div class="mb-4">
-                        <h6 class="mb-2">Category</h6>
+                    @if (Model.UserLat.HasValue) { <input type="hidden" name="lat" value="@Model.UserLat" /> }
+                    @if (Model.UserLng.HasValue) { <input type="hidden" name="lng" value="@Model.UserLng" /> }
+                    <div class="filter-section">
+                        <h6 class="mb-2"><i class="bi bi-grid-3x3-gap"></i> Category</h6>
                         @foreach (var c in Model.Categories)
                         {
                             <div class="form-check">
@@ -27,23 +29,32 @@
                             <label class="form-check-label" for="cat_all">All Categories</label>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <h6 class="mb-2">Price Range (PKR)</h6>
-                        <div class="row g-2">
+                    <div class="filter-section">
+                        <h6 class="mb-2"><i class="bi bi-currency-exchange"></i> Price Range</h6>
+                        <div class="row g-2 mb-2">
                             <div class="col-6">
-                                <input type="number" name="minPrice" value="@Model.MinPrice" class="form-control form-control-sm" placeholder="Min" min="0" step="100" />
+                                <input type="number" name="minPrice" value="@Model.MinPrice" class="form-control form-control-sm" placeholder="PKR" min="0" step="100" />
                             </div>
                             <div class="col-6">
-                                <input type="number" name="maxPrice" value="@Model.MaxPrice" class="form-control form-control-sm" placeholder="Max" min="0" step="100" />
+                                <input type="number" name="maxPrice" value="@Model.MaxPrice" class="form-control form-control-sm" placeholder="PKR" min="0" step="100" />
                             </div>
                         </div>
+                        <input type="range" class="form-range price-slider" min="0" max="100000" step="1000" value="@((Model.MaxPrice ?? 5500) > 0 ? Model.MaxPrice ?? 5500 : 5500)" id="shopPriceSlider" title="Max price" />
                     </div>
-                    <div class="mb-4">
-                        <h6 class="mb-2">Location</h6>
+                    <div class="filter-section">
+                        <h6 class="mb-2"><i class="bi bi-geo-alt"></i> Location</h6>
+                        <p class="small text-muted mb-2">Only locations with products are shown.</p>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" checked disabled />
-                            <label class="form-check-label">Karachi, Pakistan</label>
+                            <input class="form-check-input" type="radio" name="locationId" value="" id="shop_loc_all" @(!Model.SelectedLocationId.HasValue ? "checked" : "") onchange="document.getElementById('filterForm').submit()" />
+                            <label class="form-check-label" for="shop_loc_all">All Locations</label>
                         </div>
+                        @foreach (var loc in Model.LocationOptions)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="locationId" value="@loc.Id" id="shop_loc_@loc.Id" @(Model.SelectedLocationId == loc.Id ? "checked" : "") onchange="document.getElementById('filterForm').submit()" />
+                                <label class="form-check-label" for="shop_loc_@loc.Id">@loc.DisplayName</label>
+                            </div>
+                        }
                     </div>
                     <button type="submit" class="btn btn-shopwala w-100 mb-2">Apply Filters</button>
                     <a asp-action="Index" class="btn btn-link btn-sm text-muted w-100">Clear All</a>
@@ -63,8 +74,8 @@
                 {
                     <div class="col-12 col-sm-6 col-md-4 col-xl-3">
                         <div class="card product-card h-100 border-0">
-                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block text-decoration-none">
-                                <span class="badge badge-verified position-absolute top-0 start-0 m-2"><i class="bi bi-patch-check me-1"></i>Verified</span>
+                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block text-decoration-none product-card-link" data-product-detail-id="@p.Id">
+                                <span class="badge badge-verified position-absolute top-0 start-0 m-2"><i class="bi bi-patch-check me-1"></i>Verified Supplier</span>
                                 <img src="@(p.MainImageUrl ?? "/images/placeholder.svg")" class="card-img-top product-card-img" alt="@p.Name" onerror="this.src='/images/placeholder.svg'"/>
                                 <button type="button" class="btn btn-sm wishlist-btn @(User.Identity?.IsAuthenticated == true && p.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@p.Id" data-in-wishlist="@((User.Identity?.IsAuthenticated == true && p.IsInWishlist).ToString().ToLower())" title="Wishlist">
                                     <i class="bi @(User.Identity?.IsAuthenticated == true && p.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
@@ -72,21 +83,20 @@
                             </a>
                             <div class="card-body product-card-body">
                                 <h6 class="card-title">@p.Name</h6>
-                                <p class="small text-muted mb-2"><i class="bi bi-geo-alt me-1"></i>Karachi, Pakistan</p>
+                                <p class="small text-muted mb-2"><i class="bi bi-geo-alt me-1"></i>@(p.LocationName ?? "—")</p>
                                 <p class="mb-2">
                                     @if (p.SalePrice > p.DisplayPrice)
                                     {
-                                        var pct = (int)Math.Round((1 - (decimal)p.DisplayPrice / p.SalePrice) * 100);
-                                        <span class="discount-badge me-1">Save @pct%</span>
-                                        <span class="product-price-old">Rs @p.SalePrice.ToString("N0")</span>
-                                        <span class="product-price ms-1">Rs @p.DisplayPrice.ToString("N0")</span>
+                                        <span class="product-price-old me-1">Rs @p.SalePrice.ToString("N0")</span>
+                                        <span class="product-price">Rs @p.DisplayPrice.ToString("N0")</span>
                                     }
                                     else
                                     {
                                         <span class="product-price">Rs @p.DisplayPrice.ToString("N0")</span>
                                     }
+                                    <span class="small text-muted">/ unit</span>
                                 </p>
-                                <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100">View</a>
+                                <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100 product-card-link" data-product-detail-id="@p.Id">Get Quote</a>
                             </div>
                         </div>
                     </div>
@@ -108,7 +118,7 @@
                         @for (var i = 1; i <= Math.Min(Model.TotalPages, 10); i++)
                         {
                             <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-search="@Model.SearchTerm" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice">@i</a>
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-search="@Model.SearchTerm" asp-route-categoryId="@Model.SelectedCategoryId" asp-route-locationId="@Model.SelectedLocationId" asp-route-lat="@Model.UserLat" asp-route-lng="@Model.UserLng" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice">@i</a>
                             </li>
                         }
                     </ul>
@@ -123,23 +133,34 @@
 @section Scripts {
 <script>
 $(function() {
+    if (!window.location.search.includes('lat=') && navigator.geolocation && !sessionStorage.getItem('shopGeoAsked')) {
+        sessionStorage.setItem('shopGeoAsked', '1');
+        navigator.geolocation.getCurrentPosition(
+            function(pos) {
+                var u = new URL(window.location.href);
+                u.searchParams.set('lat', pos.coords.latitude);
+                u.searchParams.set('lng', pos.coords.longitude);
+                window.location.href = u.toString();
+            },
+            function() {}
+        );
+    }
+    var slider = document.getElementById('shopPriceSlider');
+    var maxInput = document.querySelector('form#filterForm input[name="maxPrice"]');
+    if (slider && maxInput) {
+        slider.addEventListener('input', function() { maxInput.value = this.value || ''; });
+        maxInput.addEventListener('input', function() { var v = parseInt(this.value, 10); if (!isNaN(v)) slider.value = Math.min(100000, Math.max(0, v)); });
+    }
     var g = typeof getGuestWishlist === 'function' ? getGuestWishlist() : [];
     $('.wishlist-btn').each(function() {
-        var pid = parseInt(this.dataset.productId, 10);
-        if (g.indexOf(pid) >= 0) {
-            this.dataset.inWishlist = 'true';
+        var pid = parseInt(this.getAttribute('data-product-id'), 10);
+        if (!isNaN(pid) && g.indexOf(pid) >= 0) {
+            this.setAttribute('data-in-wishlist', 'true');
             this.classList.remove('btn-outline-danger'); this.classList.add('btn-danger');
             var icon = this.querySelector('i'); if (icon) { icon.classList.remove('bi-heart'); icon.classList.add('bi-heart-fill'); }
         }
     });
-    $(document).on('click', '.wishlist-btn', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var btn = this;
-        var productId = parseInt(btn.dataset.productId, 10) || btn.dataset.productId;
-        var inWishlist = btn.dataset.inWishlist === 'true';
-        if (typeof wishlistToggle === 'function') wishlistToggle(btn, productId, inWishlist);
-    });
+    if (typeof updateWishlistCount === 'function') updateWishlistCount();
 });
 </script>
 }

@@ -37,6 +37,12 @@
                 <div class="col-12"><label class="form-label">Name</label><input asp-for="Name" class="form-control" required /></div>
                 <div class="col-md-6"><label class="form-label">SKU</label><input asp-for="SKU" class="form-control" required /></div>
                 <div class="col-md-6"><label class="form-label">Category</label><select asp-for="CategoryId" class="form-select" asp-items="@(new SelectList(Model.Categories, "Id", "Name"))" required></select></div>
+                <div class="col-12 position-relative">
+                    <label class="form-label">Location (optional) – search & select</label>
+                    <input type="hidden" asp-for="LocationId" id="locationId" />
+                    <input type="text" id="locationSearch" class="form-control" placeholder="Search location (e.g. Karachi, Clifton, DHA)..." autocomplete="off" />
+                    <div id="locationDropdown" class="list-group position-absolute start-0 shadow-sm w-100" style="display:none; max-height:220px; overflow-y:auto; z-index:1000; top: 100%;"></div>
+                </div>
                 <div class="col-md-4"><label class="form-label">Purchase Price (Rs)</label><input asp-for="PurchasePrice" type="number" step="0.01" class="form-control" /></div>
                 <div class="col-md-4"><label class="form-label">Sale Price (Rs)</label><input asp-for="SalePrice" type="number" step="0.01" class="form-control" required /></div>
                 <div class="col-md-4"><label class="form-label">Discount Price (Rs)</label><input asp-for="DiscountPrice" type="number" step="0.01" class="form-control" /></div>
@@ -95,6 +101,55 @@
     container.addEventListener('click', function(e) {
         if (e.target.closest('.remove-spec')) { e.target.closest('.spec-row')?.remove(); idx--; }
     });
+
+    (function() {
+        var locationIdEl = document.getElementById('locationId');
+        var locationSearchEl = document.getElementById('locationSearch');
+        var locationDropdownEl = document.getElementById('locationDropdown');
+        var baseUrl = '/Admin/api/LocationsApi/search';
+
+        function showDropdown(items) {
+            locationDropdownEl.innerHTML = '';
+            if (!items || items.length === 0) {
+                locationDropdownEl.style.display = 'none';
+                return;
+            }
+            items.forEach(function(o) {
+                var a = document.createElement('a');
+                a.href = '#';
+                a.className = 'list-group-item list-group-item-action';
+                a.textContent = o.fullPath || o.name;
+                a.dataset.id = o.id;
+                a.dataset.path = o.fullPath || o.name;
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    locationIdEl.value = this.dataset.id;
+                    locationSearchEl.value = this.dataset.path;
+                    locationDropdownEl.style.display = 'none';
+                });
+                locationDropdownEl.appendChild(a);
+            });
+            locationDropdownEl.style.display = 'block';
+        }
+
+        locationSearchEl.addEventListener('input', function() {
+            if (this.value.trim().length === 0) {
+                locationIdEl.value = '';
+                locationDropdownEl.style.display = 'none';
+                return;
+            }
+            clearTimeout(locationSearchEl._debounce);
+            locationSearchEl._debounce = setTimeout(function() {
+                fetch(baseUrl + '?q=' + encodeURIComponent(locationSearchEl.value.trim()))
+                    .then(function(r) { return r.json(); })
+                    .then(showDropdown)
+                    .catch(function() { showDropdown([]); });
+            }, 200);
+        });
+        locationSearchEl.addEventListener('blur', function() {
+            setTimeout(function() { locationDropdownEl.style.display = 'none'; }, 150);
+        });
+    })();
 })();
 </script>
 }

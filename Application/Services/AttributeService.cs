@@ -7,7 +7,7 @@ namespace Application.Services;
 
 public interface IAttributeService
 {
-    Task<IReadOnlyList<CategoryAttributeDto>> GetAttributesByCategoryIdAsync(int categoryId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<CategoryAttributeDto>> GetAttributesByCategoryIdAsync(long categoryId, CancellationToken cancellationToken = default);
 }
 
 public class AttributeService : IAttributeService
@@ -19,7 +19,7 @@ public class AttributeService : IAttributeService
         _categoryAttributeRepo = categoryAttributeRepo;
     }
 
-    public async Task<IReadOnlyList<CategoryAttributeDto>> GetAttributesByCategoryIdAsync(int categoryId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<CategoryAttributeDto>> GetAttributesByCategoryIdAsync(long categoryId, CancellationToken cancellationToken = default)
     {
         return await _categoryAttributeRepo.Query()
             .Where(ca => ca.CategoryId == categoryId)

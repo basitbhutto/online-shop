@@ -1,18 +1,19 @@
 namespace Shared.DTOs;
 
 public record ProductListDto(
-    int Id,
+    long Id,
     string Name,
     string SKU,
     string CategoryName,
     decimal SalePrice,
     decimal? DiscountPrice,
     int Stock,
-    string? MainImageUrl
+    string? MainImageUrl,
+    string? LocationName
 );
 
 public record ProductDetailDto(
-    int Id,
+    long Id,
     string Name,
     string SKU,
     string CategoryName,
@@ -32,7 +33,7 @@ public record ProductSpecificationDto(string Key, string Value);
 public record ProductAttributeValueDto(string AttributeName, string Value);
 
 public record ProductVariantDto(
-    int Id,
+    long Id,
     string VariantCombination,
     int Stock,
     decimal? PriceOverride,

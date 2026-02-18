@@ -37,7 +37,7 @@ public class CartController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Add(int productId, int? variantId, int quantity = 1, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Add(long productId, long? variantId, int quantity = 1, CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
         await _cartService.AddToCartAsync(userId, productId, variantId, quantity, cancellationToken);
@@ -46,7 +46,7 @@ public class CartController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Remove(int id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Remove(long id, CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
         await _cartService.RemoveFromCartAsync(userId, id, cancellationToken);
@@ -55,7 +55,7 @@ public class CartController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateQuantity(int id, int quantity, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> UpdateQuantity(long id, int quantity, CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
         await _cartService.UpdateQuantityAsync(userId, id, quantity, cancellationToken);

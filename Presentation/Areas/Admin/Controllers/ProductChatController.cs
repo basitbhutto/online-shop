@@ -21,7 +21,7 @@ public class ProductChatController : Controller
         return View(threads);
     }
 
-    public async Task<IActionResult> Thread(int id, CancellationToken ct)
+    public async Task<IActionResult> Thread(Guid id, CancellationToken ct)
     {
         var threads = await _chatService.GetAdminThreadsAsync(ct);
         var thread = threads.FirstOrDefault(t => t.Thread.Id == id).Thread;

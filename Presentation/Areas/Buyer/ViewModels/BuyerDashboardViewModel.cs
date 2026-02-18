@@ -12,7 +12,7 @@ public class BuyerDashboardViewModel
 
 public class OrderSummaryDto
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public OrderStatus Status { get; set; }
     public string StatusText => Status.ToString().Replace("_", " ");
     public decimal TotalAmount { get; set; }

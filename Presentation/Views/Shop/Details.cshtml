@@ -42,7 +42,7 @@
                     <div class="d-flex gap-2 overflow-auto">
                         @for (var i = 0; i < Model.ImageUrls.Count; i++)
                         {
-                            <button type="button" class="flex-shrink-0 border rounded p-0 overflow-hidden @(i == 0 ? "border-primary border-2" : "border-secondary")" style="width:60px;height:60px" data-bs-target="#productGallery" data-bs-slide-to="@i">
+                            <button type="button" class="flex-shrink-0 border rounded p-0 overflow-hidden @(i == 0 ? "border-primary border-2" : "border-secondary")" style="width:60px;height:60px;border-radius:10px;" data-bs-target="#productGallery" data-bs-slide-to="@i">
                                 <img src="@Model.ImageUrls[i]" class="w-100 h-100 object-fit-cover" alt="" onerror="this.src='/images/placeholder.svg'" style="object-fit:cover"/>
                             </button>
                         }
@@ -55,18 +55,16 @@
                 <div class="d-flex flex-wrap gap-2 mb-3">
                     @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
-                            <input type="hidden" name="productId" value="@Model.Id" />
-                            <input type="hidden" name="quantity" value="1" />
+                        <form class="js-add-to-cart-form d-inline" method="post" data-product-id="@Model.Id" data-quantity="1">
                             <button type="submit" class="btn btn-shopwala">Add to Cart</button>
                         </form>
-                        <a asp-controller="Shop" asp-action="BuyNow" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Buy Now</a>
+                        <a asp-controller="Shop" asp-action="BuyNow" asp-route-id="@Model.Id" class="btn btn-secondary">Buy Now</a>
                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#productChatModal"><i class="bi bi-chat-dots me-1"></i>Chat about this product</button>
                     }
                     else
                     {
                         <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-shopwala">Login to Add to Cart</a>
-                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("BuyNow", "Shop", new { id = Model.Id })" class="btn btn-outline-secondary">Buy Now</a>
+                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("BuyNow", "Shop", new { id = Model.Id })" class="btn btn-secondary">Buy Now</a>
                         <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-outline-primary"><i class="bi bi-chat-dots me-1"></i>Login to Chat</a>
                     }
                 </div>
@@ -129,7 +127,7 @@
                 <div class="p-3 border-top">
                     <div class="input-group">
                         <input type="text" id="chatInput" class="form-control" placeholder="Type your message..." maxlength="500" />
-                        <button type="button" id="chatSendBtn" class="btn btn-shopwala"><i class="bi bi-send"></i></button>
+                        <button type="button" id="chatSendBtn" class="btn btn-shopwala" title="Send"><i class="bi bi-send"></i></button>
                     </div>
                 </div>
             </div>
@@ -176,21 +174,61 @@ $(function() {
         return chatConnection.start().then(function() { return true; });
     }
 
+    function setChatReady(ready) {
+        var input = document.getElementById('chatInput');
+        var btn = document.getElementById('chatSendBtn');
+        if (input) input.disabled = !ready;
+        if (btn) btn.disabled = !ready;
+    }
+
+    function showChatError(msg) {
+        $('#chatMessages').html('<div class="text-center text-muted py-4"><p class="mb-2">' + (msg || 'Could not load chat.') + '</p><button type="button" class="btn btn-sm btn-outline-primary" id="chatRetryBtn">Retry</button></div>');
+        setChatReady(false);
+        $(document).off('click.chatRetry').on('click.chatRetry', '#chatRetryBtn', function() { loadChatThread(); });
+    }
+
+    function loadChatThread() {
+        var $messages = $('#chatMessages');
+        $messages.html('<div class="text-center text-muted py-4"><span class="spinner-border spinner-border-sm me-2"></span>Loading conversation...</div>');
+        setChatReady(false);
+        fetch('/api/chat/thread/' + productId, { method: 'POST', credentials: 'include' })
+            .then(function(r) {
+                if (r.status === 401) {
+                    showChatError('Please log in to chat.');
+                    return null;
+                }
+                if (!r.ok) throw new Error('Failed to start chat');
+                return r.json();
+            })
+            .then(function(d) {
+                if (!d) return;
+                chatThreadId = d.threadId || d.ThreadId;
+                if (!chatThreadId) {
+                    showChatError('Could not start chat. Please try again.');
+                    return;
+                }
+                setChatReady(true);
+                loadChatMessages();
+                var inp = document.getElementById('chatInput');
+                if (inp) { inp.focus(); }
+                fetch('/api/chat/thread/' + chatThreadId + '/read', { method: 'POST', credentials: 'include' });
+                ensureChatConnection().then(function() {
+                    if (chatConnection && chatThreadId) chatConnection.invoke('JoinThread', chatThreadId);
+                });
+            })
+            .catch(function() {
+                showChatError('Could not load chat. Please try again.');
+            });
+    }
+
     $('#productChatModal').on('shown.bs.modal', function() {
         if (chatThreadId === null) {
-            fetch('/api/chat/thread/' + productId, { method: 'POST', credentials: 'include' })
-                .then(function(r) { return r.json(); })
-                .then(function(d) {
-                    chatThreadId = d.threadId;
-                    if (!chatThreadId) return;
-                    loadChatMessages();
-                    fetch('/api/chat/thread/' + chatThreadId + '/read', { method: 'POST', credentials: 'include' });
-                    ensureChatConnection().then(function() {
-                        if (chatConnection && chatThreadId) chatConnection.invoke('JoinThread', chatThreadId);
-                    });
-                });
+            loadChatThread();
         } else {
+            setChatReady(true);
             loadChatMessages();
+            var inp = document.getElementById('chatInput');
+            if (inp) { inp.focus(); }
             fetch('/api/chat/thread/' + chatThreadId + '/read', { method: 'POST', credentials: 'include' });
             ensureChatConnection().then(function() {
                 if (chatConnection && chatThreadId) chatConnection.invoke('JoinThread', chatThreadId);
@@ -234,7 +272,9 @@ $(function() {
         } else {
             fetch('/api/chat/thread/' + chatThreadId + '/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: txt }), credentials: 'include' })
                 .then(function(r) { return r.json(); })
-                .then(function(d) { if (d) appendMessage(d.message, d.isFromAdmin, d.createdAt); });
+                .then(function(d) {
+                    if (d && (!chatConnection || chatConnection.state !== 1)) appendMessage(d.message, d.isFromAdmin, d.createdAt);
+                });
         }
     }
     $('#chatSendBtn').on('click', doSend);

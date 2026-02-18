@@ -7,9 +7,9 @@ namespace Application.Services;
 public interface IWishlistService
 {
     Task<IReadOnlyList<Wishlist>> GetWishlistAsync(string userId, CancellationToken cancellationToken = default);
-    Task<bool> AddToWishlistAsync(string userId, int productId, CancellationToken cancellationToken = default);
-    Task<bool> RemoveFromWishlistAsync(string userId, int productId, CancellationToken cancellationToken = default);
-    Task<bool> IsInWishlistAsync(string userId, int productId, CancellationToken cancellationToken = default);
+    Task<bool> AddToWishlistAsync(string userId, long productId, CancellationToken cancellationToken = default);
+    Task<bool> RemoveFromWishlistAsync(string userId, long productId, CancellationToken cancellationToken = default);
+    Task<bool> IsInWishlistAsync(string userId, long productId, CancellationToken cancellationToken = default);
 }
 
 public class WishlistService : IWishlistService
@@ -35,7 +35,7 @@ public class WishlistService : IWishlistService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<bool> AddToWishlistAsync(string userId, int productId, CancellationToken cancellationToken = default)
+    public async Task<bool> AddToWishlistAsync(string userId, long productId, CancellationToken cancellationToken = default)
     {
         var existing = await _wishlistRepo.FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId, cancellationToken);
         if (existing != null) return true;
@@ -45,7 +45,7 @@ public class WishlistService : IWishlistService
         return true;
     }
 
-    public async Task<bool> RemoveFromWishlistAsync(string userId, int productId, CancellationToken cancellationToken = default)
+    public async Task<bool> RemoveFromWishlistAsync(string userId, long productId, CancellationToken cancellationToken = default)
     {
         var item = await _wishlistRepo.FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId, cancellationToken);
         if (item == null) return false;
@@ -54,7 +54,7 @@ public class WishlistService : IWishlistService
         return true;
     }
 
-    public async Task<bool> IsInWishlistAsync(string userId, int productId, CancellationToken cancellationToken = default)
+    public async Task<bool> IsInWishlistAsync(string userId, long productId, CancellationToken cancellationToken = default)
     {
         return await _wishlistRepo.FirstOrDefaultAsync(w => w.UserId == userId && w.ProductId == productId, cancellationToken) != null;
     }

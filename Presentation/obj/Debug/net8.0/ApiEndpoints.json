@@ -1,5 +1,47 @@
 [
   {
+    "ContainingType": "Presentation.Areas.Admin.Controllers.LocationsApiController",
+    "Method": "GetChildren",
+    "RelativePath": "Admin/api/LocationsApi/children",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "parentId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Areas.Admin.Controllers.LocationsApiController",
+    "Method": "GetRoots",
+    "RelativePath": "Admin/api/LocationsApi/roots",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Presentation.Areas.Admin.Controllers.LocationsApiController",
+    "Method": "Search",
+    "RelativePath": "Admin/api/LocationsApi/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "q",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Presentation.Controllers.Api.AttributesController",
     "Method": "GetByCategory",
     "RelativePath": "api/Attributes/{categoryId}",
@@ -9,7 +51,7 @@
     "Parameters": [
       {
         "Name": "categoryId",
-        "Type": "System.Int32",
+        "Type": "System.Int64",
         "IsRequired": true
       }
     ],
@@ -51,7 +93,7 @@
     "Parameters": [
       {
         "Name": "productId",
-        "Type": "System.Int32",
+        "Type": "System.Int64",
         "IsRequired": true
       }
     ],
@@ -67,7 +109,7 @@
     "Parameters": [
       {
         "Name": "threadId",
-        "Type": "System.Int32",
+        "Type": "System.Guid",
         "IsRequired": true
       }
     ],
@@ -83,7 +125,7 @@
     "Parameters": [
       {
         "Name": "threadId",
-        "Type": "System.Int32",
+        "Type": "System.Guid",
         "IsRequired": true
       }
     ],
@@ -99,7 +141,7 @@
     "Parameters": [
       {
         "Name": "threadId",
-        "Type": "System.Int32",
+        "Type": "System.Guid",
         "IsRequired": true
       },
       {
@@ -137,6 +179,27 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Presentation.Controllers.Api.ShopApiController",
+    "Method": "Search",
+    "RelativePath": "api/shop/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "q",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "take",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Presentation.Controllers.Api.WishlistController",
     "Method": "Add",
     "RelativePath": "api/Wishlist/{productId}",
@@ -146,7 +209,7 @@
     "Parameters": [
       {
         "Name": "productId",
-        "Type": "System.Int32",
+        "Type": "System.Int64",
         "IsRequired": true
       }
     ],
@@ -162,7 +225,7 @@
     "Parameters": [
       {
         "Name": "productId",
-        "Type": "System.Int32",
+        "Type": "System.Int64",
         "IsRequired": true
       }
     ],

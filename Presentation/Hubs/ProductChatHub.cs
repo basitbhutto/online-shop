@@ -14,17 +14,17 @@ public class ProductChatHub : Hub
         _chatService = chatService;
     }
 
-    public async Task JoinThread(int threadId)
+    public async Task JoinThread(Guid threadId)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, "thread_" + threadId);
     }
 
-    public async Task LeaveThread(int threadId)
+    public async Task LeaveThread(Guid threadId)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, "thread_" + threadId);
     }
 
-    public async Task SendMessage(int threadId, string message)
+    public async Task SendMessage(Guid threadId, string message)
     {
         var userId = Context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId)) return;
