@@ -14,7 +14,7 @@ public class OrderSummaryDto
 {
     public long Id { get; set; }
     public OrderStatus Status { get; set; }
-    public string StatusText => Status.ToString().Replace("_", " ");
+    public string StatusText => Presentation.Helpers.OrderStatusHelper.DisplayName(Status);
     public decimal TotalAmount { get; set; }
     public DateTime CreatedDate { get; set; }
 }

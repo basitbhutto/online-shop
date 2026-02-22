@@ -91,6 +91,7 @@ public class ProductChatService : IProductChatService
     {
         var threads = await _threadRepo.Query()
             .Include(t => t.Product)
+                .ThenInclude(p => p.Images)
             .Include(t => t.Buyer)
             .Include(t => t.Messages)
             .OrderByDescending(t => t.Id)

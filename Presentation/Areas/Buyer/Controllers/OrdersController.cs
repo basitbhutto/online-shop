@@ -1,8 +1,9 @@
 using Application.Services;
+using Domain.Entities;
+using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Domain.Entities;
 using Presentation.Areas.Buyer.ViewModels;
 using Shared.Constants;
 
@@ -46,5 +47,17 @@ public class OrdersController : Controller
         if (order == null) return NotFound();
 
         return View(order);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Cancel(long id, string? notes, CancellationToken ct = default)
+    {
+        var userId = _userManager.GetUserId(User);
+        if (userId == null) return RedirectToAction("Login", "Account", new { area = "" });
+
+        var ok = await _orderService.CancelOrderAsync(id, userId, isAdmin: false, notes, ct);
+        if (!ok) TempData["Error"] = "Order cannot be cancelled.";
+        return RedirectToAction(nameof(Details), new { id });
     }
 }

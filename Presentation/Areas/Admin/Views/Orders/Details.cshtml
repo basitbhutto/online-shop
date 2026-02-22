@@ -1,4 +1,6 @@
 @model Domain.Entities.Order
+@using Presentation.Helpers
+@using Domain.Enums
 @{
     ViewData["Title"] = "Order #" + Model.Id;
 }
@@ -33,7 +35,7 @@
                     @foreach (var h in Model.StatusHistory.OrderByDescending(x => x.ChangedDate))
                     {
                         <li class="list-group-item d-flex justify-content-between">
-                            <span>@(((Domain.Enums.OrderStatus)h.Status).ToString().Replace("_", " ")) @(!string.IsNullOrEmpty(h.Notes) ? $"– {h.Notes}" : "")</span>
+                            <span>@OrderStatusHelper.DisplayName(h.Status) @(!string.IsNullOrEmpty(h.Notes) ? $"– {h.Notes}" : "")</span>
                             <small class="text-muted">@h.ChangedDate.ToString("dd MMM HH:mm")</small>
                         </li>
                     }
@@ -48,9 +50,9 @@
                     <div class="row g-2">
                         <div class="col-md-4">
                             <select name="status" class="form-select">
-                                @foreach (var s in Enum.GetValues<Domain.Enums.OrderStatus>())
+                                @foreach (var s in Enum.GetValues<OrderStatus>())
                                 {
-                                    <option value="@s" selected="@(Model.Status == s)">@s.ToString().Replace("_", " ")</option>
+                                    <option value="@((int)s)" selected="@((int)Model.Status == (int)s)">@OrderStatusHelper.DisplayName(s)</option>
                                 }
                             </select>
                         </div>
@@ -83,7 +85,7 @@
                 <p class="mb-0">Customer: @Model.User?.Email</p>
             </div>
         </div>
-        @if (Model.Status != Domain.Enums.OrderStatus.Cancelled && Model.Status != Domain.Enums.OrderStatus.Delivered)
+        @if (OrderStatusHelper.CanAdminCancel(Model.Status))
         {
             <div class="card mb-4">
                 <div class="card-header">Delivery Time / Cancel</div>
@@ -133,7 +135,7 @@
                 <div class="card-body">
                     <p>@Model.DeliveryAssignment.DeliveryBoyName - @Model.DeliveryAssignment.PhoneNumber</p>
                     <p>@Model.DeliveryAssignment.VehicleType</p>
-                    @if (Model.Status != Domain.Enums.OrderStatus.Delivered)
+                    @if (Model.Status != OrderStatus.Delivered && Model.Status != OrderStatus.Completed)
                     {
                         <form asp-action="MarkDelivered" method="post">
                             <input type="hidden" name="id" value="@Model.Id" />

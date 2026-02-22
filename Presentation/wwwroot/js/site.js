@@ -122,6 +122,7 @@ $(document).on('submit', '.js-add-to-cart-form', function (e) {
             if (!d) return;
             var badge = document.getElementById('cartCountBadge');
             if (badge) badge.textContent = d.cartCount != null ? d.cartCount : (d.count != null ? d.count : (parseInt(badge.textContent, 10) || 0) + 1);
+            if (typeof loadCartDrawer === 'function') loadCartDrawer();
             var container = document.getElementById('toastContainer');
             if (container && typeof bootstrap !== 'undefined') {
                 var toastEl = document.createElement('div');
@@ -199,7 +200,7 @@ window.syncGuestWishlist = function () {
                     var html = '';
                     list.forEach(function (p) {
                         var img = (p.mainImageUrl || '/images/placeholder.svg');
-                        var url = '/Shop?search=' + encodeURIComponent(q) + '&firstId=' + (p.id || '');
+                        var url = '/Product/Details/' + (p.id || '');
                         html += '<a class="suggestion-item d-block" href="' + url + '">' +
                             '<img src="' + img + '" alt="" onerror="this.src=\'/images/placeholder.svg\'" />' +
                             '<div class="flex-grow-1"><div class="suggestion-name">' + (p.name || '').replace(/</g, '&lt;') + '</div>' +
@@ -263,7 +264,49 @@ $(document).on('click', '[data-product-detail-id]', function (e) {
         });
 });
 
+// Cart drawer: load items when opened and after add-to-cart
+function loadCartDrawer() {
+    var container = document.getElementById('cartDrawerContent');
+    if (!container) return;
+    container.innerHTML = '<p class="text-muted text-center"><span class="spinner-border spinner-border-sm me-2"></span>Loading cart...</p>';
+    fetch('/api/cart/items', { credentials: 'include' })
+        .then(function (r) {
+            if (r.status === 401) { container.innerHTML = '<p class="text-muted text-center">Please log in to view cart.</p>'; return null; }
+            return r.json();
+        })
+        .then(function (items) {
+            if (items == null) return;
+            if (!items.length) {
+                container.innerHTML = '<p class="text-muted text-center mb-0">Your cart is empty.</p>';
+                return;
+            }
+            var html = '<div class="cart-drawer-items">';
+            items.forEach(function (it) {
+                var img = (it.imageUrl || '/images/placeholder.svg');
+                var name = (it.productName || '').replace(/</g, '&lt;');
+                var price = (it.price != null ? Number(it.price).toLocaleString() : '');
+                var subtotal = (it.quantity * (it.price || 0)).toLocaleString();
+                html += '<div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom">' +
+                    '<img src="' + img + '" alt="" class="rounded" style="width:50px;height:50px;object-fit:cover" onerror="this.src=\'/images/placeholder.svg\'" />' +
+                    '<div class="flex-grow-1 min-width-0">' +
+                    '<a href="/Product/Details/' + it.productId + '" class="text-dark text-decoration-none text-truncate d-block small fw-medium">' + name + '</a>' +
+                    (it.variantCombination ? '<small class="text-muted d-block">' + (it.variantCombination || '').replace(/</g, '&lt;') + '</small>' : '') +
+                    '<span class="small text-muted">Rs ' + price + ' × ' + it.quantity + ' = Rs ' + subtotal + '</span>' +
+                    '</div></div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        })
+        .catch(function () {
+            container.innerHTML = '<p class="text-muted text-center">Could not load cart.</p>';
+        });
+}
+
 $(function () {
+    var cartDrawer = document.getElementById('cartDrawer');
+    if (cartDrawer) {
+        cartDrawer.addEventListener('shown.bs.offcanvas', function () { loadCartDrawer(); });
+    }
     var cartBadge = document.getElementById('cartCountBadge');
     if (cartBadge) {
         fetch('/api/cart/count', { credentials: 'include' })

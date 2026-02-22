@@ -598,28 +598,43 @@ input[type="range"].price-slider {
 .offcanvas { border-left: 1px solid var(--glass-border-strong); }
 .offcanvas-header.bg-dark { background: linear-gradient(135deg, var(--shopwala-primary), var(--shopwala-secondary)) !important; }
 
-/* Mobile responsive - sidebar collapses */
+/* Mobile responsive - single product per row, clean UI */
 @media (max-width: 991.98px) {
   .filter-sidebar {
     margin-bottom: 1rem;
   }
   .navbar .container { padding-left: 0.75rem; padding-right: 0.75rem; }
-  .navbar .nav-search { max-width: 100%; }
+  .nav-search-wrap { max-width: 100%; }
+  .nav-search { max-width: 100%; }
   .product-card .card-body { padding: 1rem; }
+  .navbar .d-flex.align-items-center.gap-2 { gap: 0.5rem !important; }
+  .navbar .btn-sm.rounded-circle { padding: 0.4rem !important; }
 }
 
+/* Single product per row on mobile (shop & home product grids) */
 @media (max-width: 767.98px) {
-  .row.g-4 > [class*="col-"] {
+  .container-fluid.py-4 .row.g-4 .col-12.col-sm-6,
+  .container-fluid.py-4 .row.g-4 .col-xl-3 {
     flex: 0 0 100%;
     max-width: 100%;
   }
+  .product-card-body .card-title { font-size: 0.95rem; }
+  .product-card-body .btn { padding: 0.5rem 0.75rem; font-size: 0.875rem; }
+  .filter-sidebar .filter-section { padding: 0.75rem; }
+  .filter-sidebar h5 { font-size: 1rem; }
 }
 
 @media (max-width: 575.98px) {
   .floating-chat-btn { bottom: 16px; right: 16px; width: 52px; height: 52px; }
+  .shopwala-navbar .navbar-brand-text { font-size: 1.1rem; }
+  .navbar-logo { height: 44px; }
+  .product-card { margin-bottom: 0.5rem; }
+  .category-tile { min-width: 100px; padding: 0.75rem; font-size: 0.875rem; }
+  .offcanvas.offcanvas-end { max-width: 100%; }
+  .cart-drawer-items .d-flex { font-size: 0.875rem; }
 }
 
 @media (max-width: 991.98px) {
-  .navbar .d-flex.align-items-center.gap-2 { gap: 0.5rem !important; }
-  .navbar .btn-sm.rounded-circle { padding: 0.4rem !important; }
+  .navbar-collapse { padding-top: 0.5rem; }
+  .nav-search-wrap.mx-lg-3 { margin-left: 0 !important; margin-right: 0 !important; }
 }

@@ -25,6 +25,8 @@ public class GlobalExceptionMiddleware
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception: {Message}", ex.Message);
+            if (_env.IsDevelopment())
+                throw; // Let DeveloperExceptionPage show full details
             await HandleExceptionAsync(context, ex);
         }
     }

@@ -1,12 +1,31 @@
 @model Domain.Entities.Order
+@using Presentation.Helpers
+@using Domain.Enums
 @{
     ViewData["Title"] = "Order #" + Model.Id;
 }
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 <div class="mb-4"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to Orders</a></div>
 <div class="card glass-card border-0 shadow-sm">
-    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+    <div class="card-header bg-transparent d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h5 class="mb-0">Order #@Model.Id</h5>
-        <span class="badge bg-secondary">@Model.Status.ToString().Replace("_", " ")</span>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-secondary">@OrderStatusHelper.DisplayName(Model.Status)</span>
+            @if (OrderStatusHelper.CanBuyerCancel(Model.Status))
+            {
+                <form asp-action="Cancel" method="post" class="d-inline" onsubmit="return confirm('Cancel this order?');">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <input type="hidden" name="notes" value="" />
+                    <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
+                </form>
+            }
+        </div>
     </div>
     <div class="card-body">
         <p><strong>Shipping:</strong> @Model.ShippingAddress, @Model.City</p>
@@ -20,9 +39,9 @@
                 @foreach (var item in Model.OrderItems)
                 {
                     <tr>
-                        <td>Product #@item.ProductId</td>
+                        <td>@(item.Product?.Name ?? "Product #" + item.ProductId)</td>
                         <td>@item.Quantity</td>
-                        <td>Rs @(item.Price * item.Quantity)</td>
+                        <td>Rs @((item.Price * item.Quantity).ToString("N0"))</td>
                     </tr>
                 }
             </tbody>

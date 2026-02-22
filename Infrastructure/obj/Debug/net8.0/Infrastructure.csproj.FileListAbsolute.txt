@@ -20,12 +20,6 @@ D:\Project\online-shop\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructur
 D:\Project\online-shop\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.genruntimeconfig.cache
 D:\Project\online-shop\online-shop\Infrastructure\obj\Debug\net8.0\ref\Infrastructure.dll
 D:\Project\online-shop\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.sourcelink.json
-D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.AssemblyReference.cache
-D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
-D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.AssemblyInfoInputs.cache
-D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.AssemblyInfo.cs
-D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.CoreCompileInputs.cache
-D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.sourcelink.json
 D:\Project\online-shop\Infrastructure\bin\Debug\net8.0\Infrastructure.deps.json
 D:\Project\online-shop\Infrastructure\bin\Debug\net8.0\Infrastructure.runtimeconfig.json
 D:\Project\online-shop\Infrastructure\bin\Debug\net8.0\Infrastructure.dll
@@ -36,6 +30,12 @@ D:\Project\online-shop\Infrastructure\bin\Debug\net8.0\Shared.dll
 D:\Project\online-shop\Infrastructure\bin\Debug\net8.0\Domain.pdb
 D:\Project\online-shop\Infrastructure\bin\Debug\net8.0\Application.pdb
 D:\Project\online-shop\Infrastructure\bin\Debug\net8.0\Shared.pdb
+D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.AssemblyReference.cache
+D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.AssemblyInfoInputs.cache
+D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.AssemblyInfo.cs
+D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.csproj.CoreCompileInputs.cache
+D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.sourcelink.json
 D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastr.15EFFBFE.Up2Date
 D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\Infrastructure.dll
 D:\Project\online-shop\Infrastructure\obj\Debug\net8.0\refint\Infrastructure.dll

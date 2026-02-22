@@ -84,6 +84,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Presentation.Controllers.Api.CartController",
+    "Method": "Items",
+    "RelativePath": "api/Cart/items",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Presentation.Controllers.Api.ProductChatApiController",
     "Method": "GetOrCreateThread",
     "RelativePath": "api/chat/thread/{productId}",

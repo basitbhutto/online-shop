@@ -32,6 +32,24 @@ public class CartController : ControllerBase
         var count = await _cartService.GetCartCountAsync(userId, cancellationToken);
         return Ok(new { count });
     }
+
+    [HttpGet("items")]
+    public async Task<IActionResult> Items(CancellationToken cancellationToken = default)
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
+        var items = await _cartService.GetCartAsync(userId, cancellationToken);
+        var list = items.Select(i => new
+        {
+            id = i.Id,
+            productId = i.ProductId,
+            productName = i.Product.Name,
+            imageUrl = i.Product.Images.OrderBy(img => img.SortOrder).FirstOrDefault()?.ImageUrl,
+            quantity = i.Quantity,
+            price = i.Variant?.PriceOverride ?? (i.Product.DiscountPrice ?? i.Product.SalePrice),
+            variantCombination = i.Variant?.VariantCombination
+        }).ToList();
+        return Ok(list);
+    }
 }
 
-public record AddToCartRequest(int ProductId, int? VariantId = null, int Quantity = 1);
+public record AddToCartRequest(long ProductId, long? VariantId = null, int Quantity = 1);

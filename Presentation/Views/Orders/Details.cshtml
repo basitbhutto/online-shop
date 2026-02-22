@@ -1,10 +1,12 @@
 @model Domain.Entities.Order
+@using Presentation.Helpers
+@using Domain.Enums
 @{
     ViewData["Title"] = "Order #" + Model.Id;
-    var statusDisplay = Model.Status.ToString().Replace("_", " ");
-    var statusBadgeClass = Model.Status == Domain.Enums.OrderStatus.Delivered ? "bg-success" 
-        : Model.Status == Domain.Enums.OrderStatus.Cancelled ? "bg-danger" 
-        : Model.Status == Domain.Enums.OrderStatus.Shipped || Model.Status == Domain.Enums.OrderStatus.OutForDelivery ? "bg-info" 
+    var statusDisplay = OrderStatusHelper.DisplayName(Model.Status);
+    var statusBadgeClass = Model.Status == OrderStatus.Delivered || Model.Status == OrderStatus.Completed ? "bg-success" 
+        : Model.Status == OrderStatus.Cancelled ? "bg-danger" 
+        : Model.Status == OrderStatus.AssignedToRider || Model.Status == OrderStatus.OutForDelivery ? "bg-info" 
         : "bg-secondary";
 }
 
@@ -21,7 +23,7 @@
         <span class="badge @statusBadgeClass">@statusDisplay</span>
         <span class="text-muted ms-2">Placed on @Model.CreatedDate.ToString("dd MMM yyyy HH:mm")</span>
         @{
-            var canCancel = Model.Status == Domain.Enums.OrderStatus.PendingConfirmation || Model.Status == Domain.Enums.OrderStatus.AdminReview || Model.Status == Domain.Enums.OrderStatus.Confirmed || Model.Status == Domain.Enums.OrderStatus.Preparing;
+            var canCancel = OrderStatusHelper.CanBuyerCancel(Model.Status);
         }
         @if (canCancel)
         {
@@ -58,7 +60,7 @@
                                 <li class="d-flex align-items-start mb-2">
                                     <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
                                     <div>
-                                        <span class="fw-medium">@(((Domain.Enums.OrderStatus)h.Status).ToString().Replace("_", " "))</span>
+                                        <span class="fw-medium">@OrderStatusHelper.DisplayName(h.Status)</span>
                                         <br /><small class="text-muted">@h.ChangedDate.ToString("dd MMM yyyy HH:mm")</small>
                                         @if (!string.IsNullOrEmpty(h.Notes))
                                         {

@@ -1,4 +1,6 @@
 @model IEnumerable<Domain.Entities.Order>
+@using Presentation.Helpers
+@using Domain.Enums
 @{
     ViewData["Title"] = "Orders";
 }
@@ -8,14 +10,16 @@
     <form method="get" class="d-inline">
         <select name="status" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
             <option value="">All Statuses</option>
-            <option value="PendingConfirmation" selected="@(Context.Request.Query["status"] == "PendingConfirmation")">Pending Confirmation</option>
-            <option value="AdminReview" selected="@(Context.Request.Query["status"] == "AdminReview")">Admin Review</option>
+            <option value="Pending" selected="@(Context.Request.Query["status"] == "Pending")">Pending</option>
             <option value="Confirmed" selected="@(Context.Request.Query["status"] == "Confirmed")">Confirmed</option>
-            <option value="Preparing" selected="@(Context.Request.Query["status"] == "Preparing")">Preparing</option>
-            <option value="Shipped" selected="@(Context.Request.Query["status"] == "Shipped")">Shipped</option>
+            <option value="Processing" selected="@(Context.Request.Query["status"] == "Processing")">Processing</option>
+            <option value="AssignedToRider" selected="@(Context.Request.Query["status"] == "AssignedToRider")">Assigned To Rider</option>
             <option value="OutForDelivery" selected="@(Context.Request.Query["status"] == "OutForDelivery")">Out for Delivery</option>
             <option value="Delivered" selected="@(Context.Request.Query["status"] == "Delivered")">Delivered</option>
+            <option value="Completed" selected="@(Context.Request.Query["status"] == "Completed")">Completed</option>
             <option value="Cancelled" selected="@(Context.Request.Query["status"] == "Cancelled")">Cancelled</option>
+            <option value="Returned" selected="@(Context.Request.Query["status"] == "Returned")">Returned</option>
+            <option value="FailedDelivery" selected="@(Context.Request.Query["status"] == "FailedDelivery")">Failed Delivery</option>
         </select>
     </form>
 </div>
@@ -38,7 +42,7 @@
                     <td>@o.Id</td>
                     <td>@o.User?.Email</td>
                     <td>@o.CreatedDate.ToString("dd MMM yyyy HH:mm")</td>
-                    <td><span class="badge @(o.Status == Domain.Enums.OrderStatus.Delivered ? "bg-success" : o.Status == Domain.Enums.OrderStatus.Cancelled ? "bg-danger" : o.Status == Domain.Enums.OrderStatus.Shipped || o.Status == Domain.Enums.OrderStatus.OutForDelivery ? "bg-info" : "bg-secondary")">@o.Status.ToString().Replace("_", " ")</span></td>
+                    <td><span class="badge @(o.Status == OrderStatus.Delivered || o.Status == OrderStatus.Completed ? "bg-success" : o.Status == OrderStatus.Cancelled ? "bg-danger" : o.Status == OrderStatus.AssignedToRider || o.Status == OrderStatus.OutForDelivery ? "bg-info" : "bg-secondary")">@OrderStatusHelper.DisplayName(o.Status)</span></td>
                     <td>Rs @o.TotalAmount.ToString("N0")</td>
                     <td><a asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-primary">View</a></td>
                 </tr>

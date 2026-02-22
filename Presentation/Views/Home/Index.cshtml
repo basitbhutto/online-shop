@@ -3,7 +3,6 @@
     ViewData["Title"] = "Home";
     var categories = Model?.Categories ?? new List<Presentation.ViewModels.Home.CategoryItem>();
     var products = Model?.Products ?? new List<Presentation.ViewModels.Home.ProductCardItem>();
-    var categoryName = "Headphones";
     var totalCount = products.Count;
 }
 
@@ -13,18 +12,10 @@
         <div class="container">
             <div class="d-flex gap-3 overflow-auto pb-2" style="scrollbar-width: thin;">
                 <a asp-controller="Shop" asp-action="Index" class="category-tile text-decoration-none text-dark flex-shrink-0 @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")" style="min-width: 120px;">
-                    <i class="bi bi-headphones fs-4 mb-2"></i>
-                    <span class="small fw-medium">Electronics</span>
-                </a>
-                <a asp-controller="Shop" asp-action="Index" class="category-tile text-decoration-none text-dark flex-shrink-0" style="min-width: 120px;">
-                    <i class="bi bi-bag fs-4 mb-2"></i>
-                    <span class="small fw-medium">Fashion</span>
-                </a>
-                <a asp-controller="Shop" asp-action="Index" class="category-tile text-decoration-none text-dark flex-shrink-0" style="min-width: 120px;">
-                    <i class="bi bi-house fs-4 mb-2"></i>
+                    <i class="bi bi-grid-3x3-gap fs-4 mb-2"></i>
                     <span class="small fw-medium">All Categories</span>
                 </a>
-                @foreach (var c in categories.Take(5))
+                @foreach (var c in categories.Take(6))
                 {
                     <a asp-controller="Shop" asp-action="Category" asp-route-slug="@c.Slug" class="category-tile text-decoration-none text-dark flex-shrink-0" style="min-width: 120px;">
                         <i class="bi bi-tag fs-4 mb-2"></i>
@@ -94,7 +85,7 @@
         <div class="col-12 col-lg-9 order-1 order-lg-2">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
                 <div>
-                    <h2 class="mb-1 fw-bold">Explore Premium @(categories.FirstOrDefault()?.Name ?? "Products")</h2>
+                    <h2 class="mb-1 fw-bold">Explore Premium Products</h2>
                     <p class="text-muted small mb-0">Connect with verified @(totalCount > 0 ? totalCount.ToString() : "0") suppliers for top-quality products</p>
                 </div>
             </div>
@@ -126,7 +117,14 @@
                                     }
                                     <span class="small text-muted">/ unit</span>
                                 </p>
-                                <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100 product-card-link" data-product-detail-id="@p.Id">Get Quote</a>
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <a asp-controller="Shop" asp-action="BuyNow" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100">Buy Now</a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Shop", new { id = p.Id })" class="btn btn-shopwala btn-sm w-100">Buy Now</a>
+                                }
                             </div>
                         </div>
                     </div>

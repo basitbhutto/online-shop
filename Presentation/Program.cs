@@ -16,14 +16,18 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-app.UseMiddleware<GlobalExceptionMiddleware>();
-
-
-if (!app.Environment.IsDevelopment())
+// In Development, show full exception details (stack trace, inner exceptions)
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

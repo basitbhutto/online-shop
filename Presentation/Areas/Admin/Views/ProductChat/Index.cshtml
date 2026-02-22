@@ -13,7 +13,9 @@
             <div class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
                 @foreach (var (t, unread) in threads)
                 {
-                    <a href="#" class="list-group-item list-group-item-action chat-thread" data-thread-id="@t.Id" data-product-name="@t.Product?.Name" data-buyer="@t.Buyer?.Email">
+                    var productImageUrl = t.Product?.Images?.OrderBy(i => i.SortOrder).FirstOrDefault()?.ImageUrl;
+                    var productPrice = t.Product != null ? (t.Product.DiscountPrice ?? t.Product.SalePrice) : (decimal?)null;
+                    <a href="#" class="list-group-item list-group-item-action chat-thread" data-thread-id="@t.Id" data-product-id="@t.ProductId" data-product-name="@(t.Product?.Name ?? "Product")" data-product-image="@(productImageUrl ?? "")" data-product-price="@(productPrice?.ToString("N0"))" data-buyer="@t.Buyer?.Email">
                         <div class="d-flex justify-content-between">
                             <strong>@(t.Product?.Name ?? "Product")</strong>
                             @if (unread > 0)
@@ -33,6 +35,16 @@
     </div>
     <div class="col-md-8">
         <div id="chatPanel" class="card border-0 shadow-sm @(threads.Any() ? "" : "d-none")">
+            <div id="chatProductSummary" class="border-bottom p-3 bg-light d-none">
+                <div class="d-flex align-items-center gap-3">
+                    <img id="chatProductImage" src="" alt="" class="rounded" style="width: 56px; height: 56px; object-fit: cover;" onerror="this.src='/images/placeholder.svg'" />
+                    <div class="flex-grow-1 min-width-0">
+                        <div id="chatProductName" class="fw-semibold text-dark"></div>
+                        <div id="chatProductPrice" class="small text-muted"></div>
+                        <a id="chatProductLink" href="#" class="small" target="_blank">View product</a>
+                    </div>
+                </div>
+            </div>
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span id="chatTitle">Select a thread</span>
             </div>
@@ -61,11 +73,19 @@ $(function() {
     $('.chat-thread').on('click', function(e) {
         e.preventDefault();
         var tid = $(this).data('thread-id');
+        var productId = $(this).data('product-id');
         var productName = $(this).data('product-name');
+        var productImage = $(this).data('product-image') || '/images/placeholder.svg';
+        var productPrice = $(this).data('product-price');
         var buyer = $(this).data('buyer');
         var oldTid = currentThreadId;
         currentThreadId = tid;
         $('#chatTitle').text(productName + ' - ' + buyer);
+        $('#chatProductImage').attr('src', productImage);
+        $('#chatProductName').text(productName);
+        $('#chatProductPrice').text(productPrice ? 'Rs ' + productPrice : '');
+        $('#chatProductLink').attr('href', '/Product/Details/' + productId).text('View product');
+        $('#chatProductSummary').removeClass('d-none');
         $('#chatPanel').removeClass('d-none');
         $('#chatPlaceholder').addClass('d-none');
         loadMessages(tid);

@@ -42,7 +42,7 @@ public class OrderService : IOrderService
         var order = new Order
         {
             UserId = userId,
-            Status = OrderStatus.PendingConfirmation,
+            Status = OrderStatus.Pending,
             TotalAmount = totalAmount,
             ShippingAddress = shippingAddress,
             City = AppConstants.KarachiCity,
@@ -68,7 +68,7 @@ public class OrderService : IOrderService
         await _historyRepo.AddAsync(new OrderStatusHistory
         {
             OrderId = order.Id,
-            Status = (int)OrderStatus.PendingConfirmation,
+            Status = (int)OrderStatus.Pending,
             ChangedByUserId = userId,
             Notes = "Order placed"
         }, cancellationToken);
@@ -113,11 +113,11 @@ public class OrderService : IOrderService
 
         if (isAdmin)
         {
-            if (order.Status == OrderStatus.Delivered) return false;
+            if (order.Status == OrderStatus.Delivered || order.Status == OrderStatus.Completed || order.Status == OrderStatus.Cancelled) return false;
         }
         else
         {
-            var cancellableStatuses = new[] { OrderStatus.PendingConfirmation, OrderStatus.AdminReview, OrderStatus.Confirmed, OrderStatus.Preparing };
+            var cancellableStatuses = new[] { OrderStatus.Pending, OrderStatus.Confirmed, OrderStatus.Processing };
             if (!cancellableStatuses.Contains(order.Status)) return false;
         }
 

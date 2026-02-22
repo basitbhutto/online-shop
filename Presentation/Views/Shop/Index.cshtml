@@ -96,7 +96,14 @@
                                     }
                                     <span class="small text-muted">/ unit</span>
                                 </p>
-                                <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100 product-card-link" data-product-detail-id="@p.Id">Get Quote</a>
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <a asp-controller="Shop" asp-action="BuyNow" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100">Buy Now</a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Shop", new { id = p.Id })" class="btn btn-shopwala btn-sm w-100">Buy Now</a>
+                                }
                             </div>
                         </div>
                     </div>
