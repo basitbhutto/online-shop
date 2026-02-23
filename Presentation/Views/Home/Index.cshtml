@@ -6,147 +6,78 @@
     var totalCount = products.Count;
 }
 
-@if (categories.Any())
-{
-    <section class="py-2">
-        <div class="container">
-            <div class="d-flex gap-3 overflow-auto pb-2" style="scrollbar-width: thin;">
-                <a asp-controller="Shop" asp-action="Index" class="category-tile text-decoration-none text-dark flex-shrink-0 @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")" style="min-width: 120px;">
-                    <i class="bi bi-grid-3x3-gap fs-4 mb-2"></i>
-                    <span class="small fw-medium">All Categories</span>
-                </a>
-                @foreach (var c in categories.Take(6))
-                {
-                    <a asp-controller="Shop" asp-action="Category" asp-route-slug="@c.Slug" class="category-tile text-decoration-none text-dark flex-shrink-0" style="min-width: 120px;">
-                        <i class="bi bi-tag fs-4 mb-2"></i>
-                        <span class="small fw-medium">@c.Name</span>
-                    </a>
-                }
-            </div>
-        </div>
-    </section>
-}
-
-<div class="container-fluid py-4">
-    <div class="row">
-        <aside class="col-12 col-lg-3 mb-4 mb-lg-0 order-2 order-lg-1">
-            <div class="filter-sidebar sticky-top" style="top: 90px;">
-                <h5 class="fw-bold"><i class="bi bi-funnel me-2"></i>Filters</h5>
-                <form asp-controller="Shop" asp-action="Index" method="get" id="filterFormHome">
-                    <div class="filter-section">
-                        <h6 class="mb-2"><i class="bi bi-grid-3x3-gap"></i> Category</h6>
-                        @foreach (var c in categories)
-                        {
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="categoryId" value="@c.Id" id="home_cat_@c.Id" />
-                                <label class="form-check-label" for="home_cat_@c.Id">@c.Name</label>
-                            </div>
-                        }
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="categoryId" value="" id="home_cat_all" checked />
-                            <label class="form-check-label" for="home_cat_all">All Categories</label>
-                        </div>
-                    </div>
-                    <div class="filter-section">
-                        <h6 class="mb-2"><i class="bi bi-currency-exchange"></i> Price Range</h6>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <input type="number" name="minPrice" value="" class="form-control form-control-sm" placeholder="PKR Min" min="0" step="100" />
-                            </div>
-                            <div class="col-6">
-                                <input type="number" name="maxPrice" value="" class="form-control form-control-sm" placeholder="PKR Max" min="0" step="100" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="filter-section">
-                        <h6 class="mb-2"><i class="bi bi-geo-alt"></i> Location</h6>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="loc" value="karachi" id="home_loc_khi" checked />
-                            <label class="form-check-label" for="home_loc_khi">Karachi, UAE</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="loc" value="lahore" id="home_loc_lhr" />
-                            <label class="form-check-label" for="home_loc_lhr">Lahore, Pakistan</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="loc" value="multan" id="home_loc_mul" />
-                            <label class="form-check-label" for="home_loc_mul">Multan, Pakistan</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="loc" value="all" id="home_loc_all" />
-                            <label class="form-check-label" for="home_loc_all">All Locations</label>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-shopwala w-100 mb-2">Apply Filters</button>
-                    <a asp-controller="Shop" asp-action="Index" class="btn btn-link btn-sm text-muted w-100">Clear All</a>
-                </form>
-            </div>
-        </aside>
-        <div class="col-12 col-lg-9 order-1 order-lg-2">
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="mb-1 fw-bold">Explore Premium Products</h2>
-                    <p class="text-muted small mb-0">Connect with verified @(totalCount > 0 ? totalCount.ToString() : "0") suppliers for top-quality products</p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                @foreach (var p in products)
-                {
-                    <div class="col-12 col-sm-6 col-md-4">
-                        <div class="card product-card h-100 border-0">
-                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block text-decoration-none product-card-link" data-product-detail-id="@p.Id">
-                                <span class="badge badge-verified position-absolute top-0 start-0 m-2"><i class="bi bi-patch-check me-1"></i>Verified Supplier</span>
-                                <img src="@(p.MainImageUrl ?? "/images/placeholder.svg")" class="card-img-top product-card-img" alt="@p.Name" onerror="this.src='/images/placeholder.svg'"/>
-                                <button type="button" class="btn btn-sm wishlist-btn position-absolute top-0 end-0 m-2 @(User.Identity?.IsAuthenticated == true && p.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@p.Id" data-in-wishlist="@((User.Identity?.IsAuthenticated == true && p.IsInWishlist).ToString().ToLower())" title="Wishlist">
-                                    <i class="bi @(User.Identity?.IsAuthenticated == true && p.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
-                                </button>
-                            </a>
-                            <div class="card-body product-card-body">
-                                <h6 class="card-title">@p.Name</h6>
-                                <p class="small text-muted mb-2"><i class="bi bi-geo-alt me-1"></i>@(p.LocationName ?? "—")</p>
-                                <p class="mb-2">
-                                    @if (p.SalePrice > p.DisplayPrice)
-                                    {
-                                        <span class="product-price-old me-1">Rs @p.SalePrice.ToString("N0")</span>
-                                        <span class="product-price">Rs @p.DisplayPrice.ToString("N0")</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="product-price">Rs @p.DisplayPrice.ToString("N0")</span>
-                                    }
-                                    <span class="small text-muted">/ unit</span>
-                                </p>
-                                @if (User.Identity?.IsAuthenticated == true)
-                                {
-                                    <a asp-controller="Shop" asp-action="BuyNow" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100">Buy Now</a>
-                                }
-                                else
-                                {
-                                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Shop", new { id = p.Id })" class="btn btn-shopwala btn-sm w-100">Buy Now</a>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            @if (!products.Any())
-            {
-                <div class="text-center py-5 text-muted">
-                    <p>No products yet. Add categories and products from Admin.</p>
-                    <a asp-controller="Shop" asp-action="Index" class="btn btn-shopwala">Browse Shop</a>
-                </div>
-            }
-            else
-            {
-                <div class="mt-4 text-center">
-                    <a asp-controller="Shop" asp-action="Index" class="btn btn-shopwala">View All Products</a>
-                </div>
-            }
-        </div>
+@* Hero Section *@
+<section class="hero-section" style="background-image: url('@Url.Content("~/images/header.png")');">
+    <div class="hero-overlay"></div>
+    <div class="hero-inner">
+        <h1 class="hero-title">New Collection</h1>
+        <p class="hero-subtitle">Discover the latest trends in modern minimalist fashion.</p>
+        <a asp-controller="Shop" asp-action="Index" class="btn-hero">Shop Now</a>
     </div>
-</div>
+</section>
+
+@* Featured Items Section *@
+<section class="featured-section">
+    <div class="container">
+        <h2 class="section-title">Featured Items</h2>
+        <span class="section-title-accent"></span>
+        <p class="section-subtitle">Browse our exclusive selection of premium clothing and accessories.</p>
+
+        <div class="filter-pills">
+            <a asp-controller="Shop" asp-action="Index" class="filter-pill active">All</a>
+            @foreach (var c in categories.Take(4))
+            {
+                <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="@c.Id" class="filter-pill">@c.Name</a>
+            }
+        </div>
+
+        <div class="featured-grid">
+            @foreach (var p in products)
+            {
+                <div class="card product-card h-100 border-0">
+                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block text-decoration-none product-card-link">
+                        <span class="badge badge-verified position-absolute top-0 start-0 m-2"><i class="bi bi-patch-check me-1"></i>Verified Supplier</span>
+                        <img src="@(p.MainImageUrl ?? "/images/placeholder.svg")" class="card-img-top product-card-img" alt="@p.Name" onerror="this.src='/images/placeholder.svg'"/>
+                        <button type="button" class="btn btn-sm wishlist-btn position-absolute top-0 end-0 m-2 @(User.Identity?.IsAuthenticated == true && p.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@p.Id" data-in-wishlist="@((User.Identity?.IsAuthenticated == true && p.IsInWishlist).ToString().ToLower())" title="Wishlist">
+                            <i class="bi @(User.Identity?.IsAuthenticated == true && p.IsInWishlist ? "bi-heart-fill" : "bi-heart")"></i>
+                        </button>
+                    </a>
+                    <div class="card-body product-card-body">
+                        <h6 class="card-title">@p.Name</h6>
+                        <p class="small text-muted mb-2"><i class="bi bi-geo-alt me-1"></i>@(p.LocationName ?? "—")</p>
+                        <p class="mb-2">
+                            @if (p.SalePrice > p.DisplayPrice)
+                            {
+                                <span class="product-price-old me-1">Rs @p.SalePrice.ToString("N0")</span>
+                                <span class="product-price">Rs @p.DisplayPrice.ToString("N0")</span>
+                            }
+                            else
+                            {
+                                <span class="product-price">Rs @p.DisplayPrice.ToString("N0")</span>
+                            }
+                            <span class="small text-muted">/ unit</span>
+                        </p>
+                        <button type="button" class="btn btn-shopwala btn-sm w-100 js-buy-now-sidebar" data-product-id="@p.Id" data-product-name="@p.Name" data-product-price="@p.DisplayPrice" data-product-image="@(p.MainImageUrl ?? "/images/placeholder.svg")">Buy Now</button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (!products.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <p>No products yet. Add categories and products from Admin.</p>
+                <a asp-controller="Shop" asp-action="Index" class="btn btn-shopwala">Browse Shop</a>
+            </div>
+        }
+        else
+        {
+            <div class="text-center mt-5">
+                <a asp-controller="Shop" asp-action="Index" class="btn-view-all">View All Products</a>
+            </div>
+        }
+    </div>
+</section>
 
 <div style="display:none"><form>@Html.AntiForgeryToken()</form></div>
 

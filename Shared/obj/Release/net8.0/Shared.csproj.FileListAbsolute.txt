@@ -1,0 +1,16 @@
+D:\Project\online-shop\Shared\bin\Release\net8.0\Shared.deps.json
+D:\Project\online-shop\Shared\bin\Release\net8.0\Shared.dll
+D:\Project\online-shop\Shared\bin\Release\net8.0\Shared.pdb
+D:\Project\online-shop\Shared\bin\Release\net8.0\Domain.dll
+D:\Project\online-shop\Shared\bin\Release\net8.0\Domain.pdb
+D:\Project\online-shop\Shared\obj\Release\net8.0\Shared.csproj.AssemblyReference.cache
+D:\Project\online-shop\Shared\obj\Release\net8.0\Shared.GeneratedMSBuildEditorConfig.editorconfig
+D:\Project\online-shop\Shared\obj\Release\net8.0\Shared.AssemblyInfoInputs.cache
+D:\Project\online-shop\Shared\obj\Release\net8.0\Shared.AssemblyInfo.cs
+D:\Project\online-shop\Shared\obj\Release\net8.0\Shared.csproj.CoreCompileInputs.cache
+D:\Project\online-shop\Shared\obj\Release\net8.0\Shared.sourcelink.json
+D:\Project\online-shop\Shared\obj\Release\net8.0\Shared.csproj.Up2Date
+D:\Project\online-shop\Shared\obj\Release\net8.0\Shared.dll
+D:\Project\online-shop\Shared\obj\Release\net8.0\refint\Shared.dll
+D:\Project\online-shop\Shared\obj\Release\net8.0\Shared.pdb
+D:\Project\online-shop\Shared\obj\Release\net8.0\ref\Shared.dll

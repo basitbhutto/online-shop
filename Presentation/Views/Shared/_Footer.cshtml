@@ -1,52 +1,37 @@
-<footer class="shopwala-footer">
+<footer class="shopwala-footer" id="contact">
     <div class="container">
-        <div class="row">
-            <div class="col-12 col-md-4">
-                <div id="footerBrand" class="footer-brand-wrap">
-                    <img src="@Url.Content("~/images/logo-white.png")" alt="Shopwala" class="footer-logo" data-fallback="@Url.Content("~/images/logo-while.png.jpeg")" onerror="var t=this,f=t.getAttribute('data-fallback');if(f){t.onerror=null;t.src=f;t.onerror=function(){t.style.display='none';var b=document.getElementById('footerBrand');if(b)b.classList.add('logo-fallback');}}else{t.style.display='none';var b=document.getElementById('footerBrand');if(b)b.classList.add('logo-fallback');}" />
-                    <span class="footer-brand-text">Shopwala</span>
-                </div>
-                <p class="text-white-50 small mb-0">Your trusted online shopping destination in Karachi.</p>
+        <div class="footer-grid">
+            <div id="footerBrand" class="footer-brand-wrap">
+                <img src="@Url.Content("~/images/logo.png")" alt="Shopwala" class="footer-logo" data-fallback="@Url.Content("~/images/logo.png")" onerror="var t=this,f=t.getAttribute('data-fallback');if(f){t.onerror=null;t.src=f;t.onerror=function(){t.style.display='none';var b=document.getElementById('footerBrand');if(b)b.classList.add('logo-fallback');}else{t.style.display='none';var b=document.getElementById('footerBrand');if(b)b.classList.add('logo-fallback');}}" />
+                @* <span class="footer-brand-text">Shopwala</span> *@
+                <p class="footer-tagline mb-0">Curated fashion and premium accessories for the modern individual.</p>
             </div>
-            <div class="col-6 col-md-2">
-                <h6 class="text-white fw-semibold">Shop</h6>
-                <ul class="list-unstyled small">
-                    <li><a asp-controller="Shop" asp-action="Index" class="text-white-50 text-decoration-none">All Products</a></li>
-                    <li><a asp-controller="Home" asp-action="Index" class="text-white-50 text-decoration-none">Home</a></li>
+            <div>
+                <h6>Quick Links</h6>
+                <ul>
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Shop" asp-action="Index">Shop</a></li>
+                    <li><a asp-controller="Cart" asp-action="Index">Cart</a></li>
                 </ul>
             </div>
-            <div class="col-6 col-md-2">
-                <h6 class="text-white fw-semibold">Account</h6>
-                <ul class="list-unstyled small">
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        @if (User.IsInRole("Buyer"))
-                        {
-                            <li><a asp-area="Buyer" asp-controller="Orders" asp-action="Index" class="text-white-50 text-decoration-none">My Orders</a></li>
-                            <li><a asp-area="Buyer" asp-controller="Dashboard" asp-action="Index" class="text-white-50 text-decoration-none">My Account</a></li>
-                        }
-                        @if (User.IsInRole("SuperAdmin") || User.IsInRole("AdminStaff"))
-                        {
-                            <li><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="text-white-50 text-decoration-none">Admin</a></li>
-                        }
-                    }
-                    else
-                    {
-                        <li><a asp-controller="Account" asp-action="Login" class="text-white-50 text-decoration-none">Login</a></li>
-                        <li><a asp-controller="Account" asp-action="Register" class="text-white-50 text-decoration-none">Register</a></li>
-                    }
+            <div>
+                <h6>Customer Service</h6>
+                <ul>
+                    <li><a href="#contact">Contact Us</a></li>
+                    <li><a href="#">FAQ</a></li>
                 </ul>
             </div>
-            <div class="col-12 col-md-4">
-                <h6 class="text-white fw-semibold">Delivery</h6>
-                <p class="text-white-50 small mb-2">We deliver across Karachi. Same-day or next-day delivery.</p>
-                <div class="d-flex gap-2">
-                    <a href="#" class="text-white-50"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="text-white-50"><i class="bi bi-instagram"></i></a>
+            <div>
+                <h6>Connect</h6>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="mailto:support@shopwala.com" aria-label="Email"><i class="bi bi-envelope"></i></a>
                 </div>
+                <p class="small text-muted mt-2 mb-0">support@shopwala.com</p>
             </div>
         </div>
-        <hr class="border-secondary" />
-        <div class="text-center text-white-50 small">&copy; @DateTime.UtcNow.Year Shopwala - Karachi, Pakistan</div>
+        <div class="footer-copyright">&copy; @DateTime.UtcNow.Year Shopwala. All rights reserved.</div>
     </div>
 </footer>

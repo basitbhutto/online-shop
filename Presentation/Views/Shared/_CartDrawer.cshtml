@@ -1,17 +1,29 @@
-@if (User.Identity?.IsAuthenticated == true)
-{
 <div class="offcanvas offcanvas-end" tabindex="-1" id="cartDrawer">
     <div class="offcanvas-header bg-dark text-white">
         <h5 class="offcanvas-title">Your Cart</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body p-0">
         <div id="cartDrawerContent" class="p-3">
-            <p class="text-muted text-center">Loading cart...</p>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <p class="text-muted text-center">Loading cart...</p>
+            }
+            else
+            {
+                <p class="text-muted text-center mb-2">Add items to your cart and checkout after login.</p>
+                <p class="small text-muted text-center mb-0">Please login first to add to cart and proceed.</p>
+            }
         </div>
-        <div class="p-3 border-top">
-            <a asp-controller="Cart" asp-action="Index" class="btn btn-shopwala w-100">View Cart & Checkout</a>
+        <div class="p-3 border-top" id="cartDrawerFooter">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-controller="Cart" asp-action="Index" class="btn btn-shopwala w-100">View Cart & Checkout</a>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Content("~/Cart")" class="btn btn-shopwala w-100">Login First to Proceed & Checkout</a>
+            }
         </div>
     </div>
 </div>
-}

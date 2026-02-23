@@ -62,19 +62,18 @@
             </div>
         </aside>
         <div class="col-12 col-lg-9 order-1 order-lg-2">
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="mb-1">Explore @title</h2>
-                    <p class="text-muted small mb-0">@subtitle</p>
-                </div>
+            <div class="mb-4">
+                <h2 class="mb-1 fw-bold">Explore @title</h2>
+                <span class="d-block mb-2" style="width:48px;height:3px;background:var(--color-primary);border-radius:9999px;"></span>
+                <p class="text-muted small mb-0">@subtitle</p>
             </div>
 
-            <div class="row g-4">
+            <div class="row g-4 product-grid-responsive">
                 @foreach (var p in Model.Products)
                 {
                     <div class="col-12 col-sm-6 col-md-4 col-xl-3">
                         <div class="card product-card h-100 border-0">
-                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block text-decoration-none product-card-link" data-product-detail-id="@p.Id">
+                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block text-decoration-none product-card-link">
                                 <span class="badge badge-verified position-absolute top-0 start-0 m-2"><i class="bi bi-patch-check me-1"></i>Verified Supplier</span>
                                 <img src="@(p.MainImageUrl ?? "/images/placeholder.svg")" class="card-img-top product-card-img" alt="@p.Name" onerror="this.src='/images/placeholder.svg'"/>
                                 <button type="button" class="btn btn-sm wishlist-btn @(User.Identity?.IsAuthenticated == true && p.IsInWishlist ? "btn-danger" : "btn-outline-danger")" data-product-id="@p.Id" data-in-wishlist="@((User.Identity?.IsAuthenticated == true && p.IsInWishlist).ToString().ToLower())" title="Wishlist">
@@ -96,14 +95,7 @@
                                     }
                                     <span class="small text-muted">/ unit</span>
                                 </p>
-                                @if (User.Identity?.IsAuthenticated == true)
-                                {
-                                    <a asp-controller="Shop" asp-action="BuyNow" asp-route-id="@p.Id" class="btn btn-shopwala btn-sm w-100">Buy Now</a>
-                                }
-                                else
-                                {
-                                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Shop", new { id = p.Id })" class="btn btn-shopwala btn-sm w-100">Buy Now</a>
-                                }
+                                <button type="button" class="btn btn-shopwala btn-sm w-100 js-buy-now-sidebar" data-product-id="@p.Id" data-product-name="@p.Name" data-product-price="@p.DisplayPrice" data-product-image="@(p.MainImageUrl ?? "/images/placeholder.svg")">Buy Now</button>
                             </div>
                         </div>
                     </div>
@@ -114,7 +106,7 @@
             {
                 <div class="text-center py-5">
                     <p class="text-muted">No products found. Try adjusting your filters.</p>
-                    <a asp-action="Index" class="btn btn-outline-primary">Clear Filters</a>
+                    <a asp-action="Index" class="btn btn-view-all">Clear Filters</a>
                 </div>
             }
 

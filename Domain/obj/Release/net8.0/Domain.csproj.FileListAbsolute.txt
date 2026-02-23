@@ -1,0 +1,13 @@
+D:\Project\online-shop\Domain\bin\Release\net8.0\Domain.deps.json
+D:\Project\online-shop\Domain\bin\Release\net8.0\Domain.dll
+D:\Project\online-shop\Domain\bin\Release\net8.0\Domain.pdb
+D:\Project\online-shop\Domain\obj\Release\net8.0\Domain.csproj.AssemblyReference.cache
+D:\Project\online-shop\Domain\obj\Release\net8.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\Project\online-shop\Domain\obj\Release\net8.0\Domain.AssemblyInfoInputs.cache
+D:\Project\online-shop\Domain\obj\Release\net8.0\Domain.AssemblyInfo.cs
+D:\Project\online-shop\Domain\obj\Release\net8.0\Domain.csproj.CoreCompileInputs.cache
+D:\Project\online-shop\Domain\obj\Release\net8.0\Domain.sourcelink.json
+D:\Project\online-shop\Domain\obj\Release\net8.0\Domain.dll
+D:\Project\online-shop\Domain\obj\Release\net8.0\refint\Domain.dll
+D:\Project\online-shop\Domain\obj\Release\net8.0\Domain.pdb
+D:\Project\online-shop\Domain\obj\Release\net8.0\ref\Domain.dll

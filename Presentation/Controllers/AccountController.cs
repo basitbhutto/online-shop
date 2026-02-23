@@ -31,11 +31,18 @@ public class AccountController : Controller
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null, CancellationToken cancellationToken = default)
     {
         ViewData["ReturnUrl"] = returnUrl;
-        if (!ModelState.IsValid) return View(model);
+        var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
+        if (!ModelState.IsValid)
+        {
+            if (isAjax) return Json(new { success = false, message = string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)) });
+            return View(model);
+        }
 
         var user = await _userManager.FindByEmailAsync(model.Email!);
         if (user != null && !user.EmailVerified)
         {
+            if (isAjax) return Json(new { success = false, message = "Please verify your email first. Check your inbox for the OTP." });
             ModelState.AddModelError(string.Empty, "Please verify your email first. Check your inbox for the OTP.");
             return View(model);
         }
@@ -44,11 +51,14 @@ public class AccountController : Controller
         if (result.Succeeded)
         {
             var signedUser = await _userManager.FindByEmailAsync(model.Email!);
+            var redirect = returnUrl ?? "/";
             if (signedUser != null && (await _userManager.IsInRoleAsync(signedUser, "SuperAdmin") || await _userManager.IsInRoleAsync(signedUser, "AdminStaff")))
-                return LocalRedirect(returnUrl ?? "/Admin");
-            return LocalRedirect(returnUrl ?? "/");
+                redirect = returnUrl ?? "/Admin";
+            if (isAjax) return Json(new { success = true, redirect = Url.IsLocalUrl(redirect) ? redirect : "/" });
+            return LocalRedirect(redirect);
         }
 
+        if (isAjax) return Json(new { success = false, message = "Invalid login attempt." });
         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
         return View(model);
     }
@@ -65,13 +75,20 @@ public class AccountController : Controller
     public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = null, CancellationToken cancellationToken = default)
     {
         ViewData["ReturnUrl"] = returnUrl;
-        if (!ModelState.IsValid) return View(model);
+        var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
+        if (!ModelState.IsValid)
+        {
+            if (isAjax) return Json(new { success = false, message = string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)) });
+            return View(model);
+        }
 
         var existingUser = await _userManager.FindByEmailAsync(model.Email!);
         if (existingUser != null)
         {
             if (existingUser.EmailVerified)
             {
+                if (isAjax) return Json(new { success = false, message = "An account with this email already exists. Please login." });
                 ModelState.AddModelError(string.Empty, "An account with this email already exists. Please login.");
                 return View(model);
             }
@@ -93,6 +110,8 @@ public class AccountController : Controller
         var result = await _userManager.CreateAsync(user, model.Password!);
         if (!result.Succeeded)
         {
+            var errMsg = string.Join(" ", result.Errors.Select(e => e.Description));
+            if (isAjax) return Json(new { success = false, message = errMsg });
             foreach (var error in result.Errors)
                 ModelState.AddModelError(string.Empty, error.Description);
             return View(model);
@@ -106,12 +125,15 @@ public class AccountController : Controller
         }
         catch (Exception)
         {
+            if (isAjax) return Json(new { success = false, message = "Could not send verification email. Please try again later." });
             ModelState.AddModelError(string.Empty, "Could not send verification email. Please try again later.");
             return View(model);
         }
 
         TempData["VerifyEmail"] = model.Email;
-        return RedirectToAction(nameof(VerifyOtp), new { returnUrl });
+        var verifyUrl = Url.Action(nameof(VerifyOtp), new { returnUrl });
+        if (isAjax) return Json(new { success = true, redirect = verifyUrl });
+        return Redirect(verifyUrl!);
     }
 
     [HttpGet]
