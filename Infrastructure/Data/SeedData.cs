@@ -147,7 +147,6 @@ public static class SeedData
 
         #endregion Location
 
-
         foreach (var role in new[] { RoleNames.SuperAdmin, RoleNames.AdminStaff, RoleNames.Buyer })
         {
             if (!await roleManager.RoleExistsAsync(role))
