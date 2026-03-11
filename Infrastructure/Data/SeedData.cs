@@ -17,7 +17,6 @@ public static class SeedData
 
         await context.Database.MigrateAsync();
 
-
         #region Location 
         if (!context.Locations.Any())
         {
