@@ -1,0 +1,16 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+<div class="container py-5">
+    <div class="sv-empty sv-card">
+        <i class="bi bi-exclamation-triangle"></i>
+        <h1>Something went wrong</h1>
+        <p>ShopVibe could not complete this request. Please try again.</p>
+        @if (Model.ShowRequestId)
+        {
+            <p class="small">Request ID: <code>@Model.RequestId</code></p>
+        }
+        <a asp-controller="Home" asp-action="Index" class="btn btn-sv">Back to home</a>
+    </div>
+</div>

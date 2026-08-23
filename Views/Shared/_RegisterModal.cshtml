@@ -1,0 +1,81 @@
+@model Presentation.ViewModels.Account.RegisterViewModel
+@{
+    var returnUrl = ViewData["ReturnUrl"] as string ?? Context.Request.Path.ToString();
+}
+<div class="modal fade modal-glass" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0 position-relative">
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+                <div class="w-100 text-center pt-2">
+                    @{
+                        ViewData["BrandHref"] = Url.Action("Index", "Home");
+                        ViewData["BrandSize"] = "md";
+                    }
+                    <partial name="_BrandLogo" />
+                    <h2 class="h4 fw-bold mt-3 mb-1" id="registerModalLabel">Create your account</h2>
+                    <p class="text-muted small mb-0">Join ShopVibe for faster checkout</p>
+                </div>
+            </div>
+            <div class="modal-body pt-3 pb-4">
+                <div id="registerModalErrors" class="alert alert-danger py-2 small d-none" role="alert"></div>
+                <form id="registerModalForm" asp-controller="Account" asp-action="Register" method="post" novalidate>
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="sv-label">Full name <span class="sv-required">*</span></label>
+                        <input asp-for="FullName" class="form-control" placeholder="Ali Hassan" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="sv-label">Email address <span class="sv-required">*</span></label>
+                        <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="sv-label">Password <span class="sv-required">*</span></label>
+                        <div class="input-icon-wrap">
+                            <input asp-for="Password" class="form-control" placeholder="At least 8 characters" style="padding-left:.85rem" />
+                            <button type="button" class="sv-toggle-password" aria-label="Show password"><i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword" class="sv-label">Confirm password <span class="sv-required">*</span></label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Repeat password" />
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="agreeTermsModal" name="agreeTerms" required />
+                        <label class="form-check-label small" for="agreeTermsModal">I agree to the Terms &amp; Privacy Policy <span class="sv-required">*</span></label>
+                    </div>
+                    <button type="submit" class="btn btn-sv w-100">Create account</button>
+                </form>
+                <p class="text-center mt-4 mb-0 small">Already have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal" class="fw-semibold">Sign in</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function() {
+    var form = document.getElementById('registerModalForm');
+    var errEl = document.getElementById('registerModalErrors');
+    if (!form || !errEl) return;
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        errEl.classList.add('d-none');
+        var fd = new FormData(form);
+        var btn = form.querySelector('button[type="submit"]');
+        if (window.ShopVibe) ShopVibe.setLoading(btn, true, 'Creating...');
+        fetch(form.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d.success && d.redirect) { window.location.href = d.redirect; return; }
+                errEl.textContent = d.message || 'Unable to create account.';
+                errEl.classList.remove('d-none');
+            })
+            .catch(function() {
+                errEl.textContent = 'Network error. Please try again.';
+                errEl.classList.remove('d-none');
+            })
+            .finally(function() {
+                if (window.ShopVibe) ShopVibe.setLoading(btn, false);
+            });
+    });
+})();
+</script>

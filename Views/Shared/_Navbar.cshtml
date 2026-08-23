@@ -1,0 +1,82 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var isHome = controller.Equals("Home", StringComparison.OrdinalIgnoreCase) && action.Equals("Index", StringComparison.OrdinalIgnoreCase);
+    var isShop = controller.Equals("Shop", StringComparison.OrdinalIgnoreCase);
+    var isAdminUser = User.IsInRole("SuperAdmin") || User.IsInRole("AdminStaff");
+}
+<nav class="navbar navbar-expand-lg sticky-top sv-navbar">
+    <div class="container">
+        @{
+            ViewData["BrandHref"] = Url.Action("Index", "Home");
+            ViewData["BrandSize"] = "md";
+            ViewData["BrandVariant"] = "light";
+        }
+        <partial name="_BrandLogo" />
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav navbar-center-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link @(isHome ? "active" : "")" asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(isShop ? "active" : "")" asp-controller="Shop" asp-action="Index">Shop</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")#contact">Contact</a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center flex-wrap gap-2 ms-lg-auto">
+                <div class="nav-search-wrap position-relative flex-grow-1">
+                    <form asp-controller="Shop" asp-action="Index" method="get" class="d-flex nav-search" id="navSearchForm">
+                        <i class="bi bi-search align-self-center me-2 text-muted"></i>
+                        <input type="text" name="search" id="navSearchInput" class="form-control border-0 bg-transparent p-0" placeholder="Search products..." value="@Context.Request.Query["search"]" autocomplete="off" />
+                    </form>
+                    <div class="search-suggestions shadow-sm rounded" id="searchSuggestions" style="display: none;"></div>
+                </div>
+                <ul class="navbar-nav flex-row align-items-center gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link nav-icon position-relative" asp-controller="Wishlist" asp-action="Index" title="Wishlist">
+                            <i class="bi bi-heart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="wishlistCountBadge" style="display:none">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-icon position-relative" href="#" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" title="Cart">
+                            <i class="bi bi-bag"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="cartCountBadge">0</span>
+                        </a>
+                    </li>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        @if (isAdminUser)
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-sv btn-sm" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin</a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Buyer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Buyer" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-person-circle me-1"></i>Account</a>
+                            </li>
+                        }
+                        <li class="nav-item">
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline mb-0" id="publicLogoutForm">
+                                <button type="submit" class="btn btn-outline-sv btn-sm" data-sv-logout="publicLogoutForm">Logout</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="btn btn-sv btn-sm" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path"><i class="bi bi-person me-1"></i>Login</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

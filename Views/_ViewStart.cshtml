@@ -1,0 +1,4 @@
+@{
+    var area = ViewContext.RouteData.Values["area"]?.ToString();
+    Layout = area == "Admin" ? "_AdminLayout" : "_Layout";
+}

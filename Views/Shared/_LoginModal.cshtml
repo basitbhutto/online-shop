@@ -1,0 +1,82 @@
+@model Presentation.ViewModels.Account.LoginViewModel
+@{
+    var returnUrl = ViewData["ReturnUrl"] as string ?? Context.Request.Path.ToString();
+}
+<div class="modal fade modal-glass" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0 position-relative">
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+                <div class="w-100 text-center pt-2">
+                    @{
+                        ViewData["BrandHref"] = Url.Action("Index", "Home");
+                        ViewData["BrandSize"] = "md";
+                    }
+                    <partial name="_BrandLogo" />
+                    <h2 class="h4 fw-bold mt-3 mb-1" id="loginModalLabel">Welcome back</h2>
+                    <p class="text-muted small mb-0">Sign in to your ShopVibe account</p>
+                </div>
+            </div>
+            <div class="modal-body pt-3 pb-4">
+                <div id="loginModalErrors" class="alert alert-danger py-2 small d-none" role="alert"></div>
+                <form id="loginModalForm" asp-controller="Account" asp-action="Login" method="post" novalidate>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    <div class="mb-3">
+                        <label asp-for="Email" class="sv-label">Email address <span class="sv-required">*</span></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-envelope"></i>
+                            <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="sv-label">Password <span class="sv-required">*</span></label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-lock"></i>
+                            <input asp-for="Password" class="form-control" placeholder="••••••••" />
+                            <button type="button" class="sv-toggle-password" aria-label="Show password"><i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-sv w-100">Sign in</button>
+                </form>
+                <p class="mt-4 text-center mb-0 small">Don't have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerModal" class="fw-semibold">Register</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function() {
+    var form = document.getElementById('loginModalForm');
+    var errEl = document.getElementById('loginModalErrors');
+    if (!form || !errEl) return;
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        errEl.classList.add('d-none');
+        var fd = new FormData(form);
+        var btn = form.querySelector('button[type="submit"]');
+        if (window.ShopVibe) ShopVibe.setLoading(btn, true, 'Signing in...');
+        fetch(form.action, { method: 'POST', body: fd, credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function(r) {
+                var ct = (r.headers.get('Content-Type') || '');
+                if (ct.indexOf('application/json') === -1) return { success: false, message: 'Invalid response. Please try again.' };
+                return r.json();
+            })
+            .then(function(d) {
+                if (d.success && d.redirect) { window.location.href = d.redirect; return; }
+                errEl.textContent = d.message || 'Unable to sign in.';
+                errEl.classList.remove('d-none');
+            })
+            .catch(function() {
+                errEl.textContent = 'Network error. Please try again.';
+                errEl.classList.remove('d-none');
+            })
+            .finally(function() {
+                if (window.ShopVibe) ShopVibe.setLoading(btn, false);
+            });
+    });
+})();
+</script>

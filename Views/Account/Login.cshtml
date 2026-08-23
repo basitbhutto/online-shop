@@ -1,0 +1,53 @@
+@model Presentation.ViewModels.Account.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_AuthLayout";
+}
+
+<div class="sv-auth-page">
+    <aside class="sv-auth-aside">
+        <div class="sv-brand sv-brand-dark mb-1">
+            <img src="~/images/logo-icon.svg" alt="" class="sv-logo-icon" />
+            <span class="sv-wordmark sv-wordmark-on-dark">Shop<span>Vibe</span></span>
+        </div>
+        <h2>Welcome back to ShopVibe</h2>
+        <p class="mb-0">Sign in to manage orders, save your wishlist, and checkout faster.</p>
+    </aside>
+    <div class="d-flex align-items-center justify-content-center p-4">
+        <div class="sv-auth-card">
+            <div class="mb-4">
+                <h1 class="h3 fw-bold mb-1">Sign in</h1>
+                <p class="text-muted small mb-0">Use your ShopVibe account to continue.</p>
+            </div>
+            <form asp-action="Login" method="post" novalidate>
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+                <div class="mb-3">
+                    <label asp-for="Email" class="sv-label">Email address <span class="sv-required">*</span></label>
+                    <div class="input-icon-wrap">
+                        <i class="bi bi-envelope"></i>
+                        <input asp-for="Email" class="form-control" placeholder="you@example.com" autocomplete="email" />
+                    </div>
+                    <span asp-validation-for="Email" class="field-validation-error"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password" class="sv-label">Password <span class="sv-required">*</span></label>
+                    <div class="input-icon-wrap">
+                        <i class="bi bi-lock"></i>
+                        <input asp-for="Password" class="form-control" placeholder="••••••••" autocomplete="current-password" />
+                        <button type="button" class="sv-toggle-password" aria-label="Show password"><i class="bi bi-eye"></i></button>
+                    </div>
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
+                </div>
+                <div class="mb-3 form-check">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn-sv w-100" data-loading-text="Signing in...">Sign in</button>
+            </form>
+            <p class="mt-4 text-center mb-0 small">Don't have an account? <a asp-action="Register" class="fw-semibold">Create one</a></p>
+        </div>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

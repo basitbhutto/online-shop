@@ -1,0 +1,117 @@
+@model Presentation.ViewModels.Account.VerifyOtpViewModel
+@{
+    ViewData["Title"] = "Verify Account";
+    Layout = "_AuthLayout";
+}
+
+<div class="sv-auth-page sv-auth-page-single">
+    <div class="d-flex align-items-center justify-content-center p-4 w-100">
+        <div class="sv-auth-card verify-otp-card">
+            <div class="verify-otp-header">
+                <div class="verify-otp-icon" aria-hidden="true"><i class="bi bi-shield-check"></i></div>
+                <h1 class="h3 fw-bold mb-1">Verify your email</h1>
+                <p class="text-muted small mb-1">We sent a 6-digit code to</p>
+                <p class="verify-otp-email mb-0">@Model.Email</p>
+            </div>
+            <form asp-action="VerifyOtp" method="post" id="verifyForm" class="verify-otp-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                <div class="otp-inputs-wrap" id="otpInputsWrap">
+                    <input type="text" maxlength="1" class="otp-digit" data-index="0" inputmode="numeric" autocomplete="one-time-code" aria-label="Digit 1" />
+                    <input type="text" maxlength="1" class="otp-digit" data-index="1" inputmode="numeric" aria-label="Digit 2" />
+                    <input type="text" maxlength="1" class="otp-digit" data-index="2" inputmode="numeric" aria-label="Digit 3" />
+                    <input type="text" maxlength="1" class="otp-digit" data-index="3" inputmode="numeric" aria-label="Digit 4" />
+                    <input type="text" maxlength="1" class="otp-digit" data-index="4" inputmode="numeric" aria-label="Digit 5" />
+                    <input type="text" maxlength="1" class="otp-digit" data-index="5" inputmode="numeric" aria-label="Digit 6" />
+                </div>
+                <input type="hidden" asp-for="OTP" id="otpValue" />
+                <div asp-validation-summary="ModelOnly" class="verify-otp-errors"></div>
+                <button type="submit" class="btn btn-sv w-100 verify-otp-submit" id="verifySubmitBtn" data-loading-text="Verifying...">Verify</button>
+                <div class="verify-otp-resend">
+                    <span id="resendTimer" class="text-muted small">Resend code in <strong id="resendSeconds">60</strong>s</span>
+                    <a href="#" id="resendLink" class="small fw-semibold d-none">Resend code</a>
+                </div>
+                <a asp-action="Register" class="verify-otp-change-email">Use a different email</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+(function() {
+    var inputs = document.querySelectorAll('.otp-digit');
+    var otpHidden = document.getElementById('otpValue');
+    var form = document.getElementById('verifyForm');
+    var wrap = document.getElementById('otpInputsWrap');
+
+    function updateOtp() {
+        if (otpHidden) otpHidden.value = Array.from(inputs).map(function(i) { return i.value; }).join('');
+    }
+
+    function setDigit(index, value) {
+        if (index >= 0 && index < inputs.length) {
+            inputs[index].value = value;
+            inputs[index].focus();
+        }
+    }
+
+    function handlePaste(e) {
+        e.preventDefault();
+        var pasted = (e.clipboardData || window.clipboardData).getData('text');
+        var digits = pasted.replace(/\D/g, '').slice(0, 6).split('');
+        digits.forEach(function(d, i) { if (inputs[i]) { inputs[i].value = d; } });
+        if (digits.length > 0 && inputs[Math.min(digits.length - 1, 5)]) inputs[Math.min(digits.length - 1, 5)].focus();
+        updateOtp();
+    }
+    wrap.addEventListener('paste', handlePaste);
+    inputs.forEach(function(inp) { inp.addEventListener('paste', handlePaste); });
+
+    inputs.forEach(function(input, i) {
+        input.addEventListener('input', function() {
+            var v = this.value.replace(/\D/g, '');
+            if (v.length > 1) {
+                var chars = v.slice(0, 6).split('');
+                chars.forEach(function(c, j) { setDigit(j, c); });
+                updateOtp();
+                return;
+            }
+            this.value = v;
+            if (v.length === 1 && i < inputs.length - 1) inputs[i + 1].focus();
+            updateOtp();
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && !this.value && i > 0) inputs[i - 1].focus();
+        });
+    });
+
+    form.addEventListener('submit', function() { updateOtp(); });
+
+    var seconds = 60;
+    var timerEl = document.getElementById('resendSeconds');
+    var resendLink = document.getElementById('resendLink');
+    var interval = setInterval(function() {
+        seconds--;
+        if (timerEl) timerEl.textContent = seconds;
+        if (seconds <= 0) {
+            clearInterval(interval);
+            if (timerEl && timerEl.closest('.verify-otp-resend')) timerEl.closest('.verify-otp-resend').querySelector('.text-muted')?.classList.add('d-none');
+            if (resendLink) resendLink.classList.remove('d-none');
+        }
+    }, 1000);
+
+    resendLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+        var fd = new FormData();
+        fd.append('email', '@Model.Email');
+        fd.append('__RequestVerificationToken', token);
+        fetch('@Url.Action("ResendOtp")', { method: 'POST', body: fd })
+            .then(function(r) { return r.json(); })
+            .then(function(d) { if (d && d.success) location.reload(); });
+    });
+})();
+</script>
+}

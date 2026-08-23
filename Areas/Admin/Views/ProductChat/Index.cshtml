@@ -1,0 +1,106 @@
+@model IReadOnlyList<(Domain.Entities.ProductChatThread Thread, int UnreadCount)>
+@{
+    ViewData["Title"] = "Product Chats";
+    var threads = Model ?? new List<(Domain.Entities.ProductChatThread, int)>();
+}
+<div class="sv-page-header">
+    <div>
+        <div class="sv-page-kicker">Support</div>
+        <h1 class="mb-0">Product Chats</h1>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="sv-card overflow-hidden">
+            <div class="p-3 border-bottom fw-semibold">Conversations</div>
+            <div class="list-group list-group-flush" style="max-height: 620px; overflow-y: auto;">
+                @foreach (var (t, unread) in threads)
+                {
+                    var productImageUrl = t.Product?.Images?.OrderBy(i => i.SortOrder).FirstOrDefault()?.ImageUrl;
+                    var productPrice = t.Product != null ? (t.Product.DiscountPrice ?? t.Product.SalePrice) : (decimal?)null;
+                    <a href="#" class="list-group-item list-group-item-action sv-chat-thread" data-thread-id="@t.Id" data-product-id="@t.ProductId" data-product-name="@(t.Product?.Name ?? "Product")" data-product-image="@(productImageUrl ?? "")" data-product-price="@(productPrice?.ToString("N0"))" data-buyer="@t.Buyer?.Email">
+                        <div class="d-flex justify-content-between gap-2">
+                            <strong class="text-truncate">@(t.Product?.Name ?? "Product")</strong>
+                            @if (unread > 0)
+                            {
+                                <span class="badge bg-danger">@unread</span>
+                            }
+                        </div>
+                        <small class="text-muted">@t.Buyer?.Email</small>
+                    </a>
+                }
+                @if (!threads.Any())
+                {
+                    <div class="sv-empty py-5">
+                        <i class="bi bi-chat-dots"></i>
+                        <h3>No conversations yet</h3>
+                        <p>Customer product questions will appear here.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div id="chatPanel" class="sv-card @(threads.Any() ? "" : "d-none")">
+            <div id="chatProductSummary" class="border-bottom p-3 d-none">
+                <div class="d-flex align-items-center gap-3">
+                    <img id="chatProductImage" src="" alt="" class="rounded" style="width: 56px; height: 56px; object-fit: cover;" onerror="this.src='/images/placeholder.svg'" />
+                    <div class="flex-grow-1">
+                        <div id="chatProductName" class="fw-semibold"></div>
+                        <div id="chatProductPrice" class="small text-muted"></div>
+                        <a id="chatProductLink" href="#" class="small" target="_blank">View product</a>
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 border-bottom fw-semibold" id="chatTitle">Select a conversation</div>
+            <div id="chatMessages" class="p-3" style="height: 380px; overflow-y: auto;"></div>
+            <div class="p-3 border-top">
+                <div class="input-group">
+                    <input type="text" id="chatInput" class="form-control" placeholder="Type your reply..." maxlength="500" />
+                    <button type="button" id="chatSendBtn" class="btn btn-sv"><i class="bi bi-send me-1"></i>Send</button>
+                </div>
+            </div>
+        </div>
+        <div id="chatPlaceholder" class="sv-card sv-empty @(threads.Any() ? "d-none" : "")">
+            <i class="bi bi-chat-dots"></i>
+            <h3>Select a conversation</h3>
+            <p>Choose a thread to view messages and reply.</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+<script src="~/js/chat.js" asp-append-version="true"></script>
+<script>
+$(function() {
+    var chat = ShopVibeChat.create({ container: '#chatMessages', isAdmin: true });
+    $('.sv-chat-thread').on('click', function(e) {
+        e.preventDefault();
+        var $el = $(this);
+        $('.sv-chat-thread').removeClass('active');
+        $el.addClass('active');
+        var tid = $el.data('thread-id');
+        $('#chatTitle').text($el.data('product-name') + ' — ' + $el.data('buyer'));
+        $('#chatProductImage').attr('src', $el.data('product-image') || '/images/placeholder.svg');
+        $('#chatProductName').text($el.data('product-name'));
+        $('#chatProductPrice').text($el.data('product-price') ? 'Rs ' + $el.data('product-price') : '');
+        $('#chatProductLink').attr('href', '/Shop/Details/' + $el.data('product-id'));
+        $('#chatProductSummary').removeClass('d-none');
+        $('#chatPanel').removeClass('d-none');
+        $('#chatPlaceholder').addClass('d-none');
+        chat.setThread(tid);
+        chat.loadMessages(tid);
+        chat.join(tid);
+        fetch('/api/chat/thread/' + tid + '/read', { method: 'POST', credentials: 'include' });
+    });
+    function doSend() {
+        var input = document.getElementById('chatInput');
+        var txt = input.value;
+        chat.send(txt, document.getElementById('chatSendBtn')).then(function() { input.value = ''; });
+    }
+    $('#chatSendBtn').on('click', doSend);
+    $('#chatInput').on('keypress', function(e) { if (e.which === 13) { e.preventDefault(); doSend(); } });
+});
+</script>
+}

@@ -1,0 +1,71 @@
+@model List<Presentation.Areas.Admin.ViewModels.ProductListAdminViewModel>
+@{
+    ViewData["Title"] = "Products";
+}
+<div class="sv-page-header">
+    <div>
+        <div class="sv-page-kicker">Catalog</div>
+        <h1 class="mb-0">Products</h1>
+    </div>
+    <a asp-action="Create" class="btn btn-sv"><i class="bi bi-plus-lg me-1"></i>Add product</a>
+</div>
+<div class="sv-card">
+    @if (Model.Any())
+    {
+        <div class="sv-table-wrap">
+            <table class="table sv-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>SKU</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(p.ImageUrl))
+                                {
+                                    <img src="@p.ImageUrl" alt="@p.Name" class="rounded" style="height:48px;width:48px;object-fit:cover" onerror="this.src='/images/placeholder.svg'" />
+                                }
+                                else
+                                {
+                                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height:48px;width:48px"><i class="bi bi-image text-muted"></i></div>
+                                }
+                            </td>
+                            <td><strong>@p.Name</strong></td>
+                            <td><code>@p.SKU</code></td>
+                            <td>@p.CategoryName</td>
+                            <td>Rs @p.SalePrice.ToString("N0")</td>
+                            <td>@p.Stock</td>
+                            <td><span class="badge @(p.Status == "Active" ? "bg-success" : "bg-secondary")">@p.Status</span></td>
+                            <td class="text-nowrap">
+                                <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-sv">Edit</a>
+                                <form asp-action="Delete" asp-route-id="@p.Id" method="post" class="d-inline" data-sv-confirm="1" data-sv-title="Delete product?" data-sv-text="This action cannot be undone." data-sv-ok="Delete">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="sv-empty">
+            <i class="bi bi-box-seam"></i>
+            <h3>No products found</h3>
+            <p>Start adding products to your store.</p>
+            <a asp-action="Create" class="btn btn-sv">Add product</a>
+        </div>
+    }
+</div>

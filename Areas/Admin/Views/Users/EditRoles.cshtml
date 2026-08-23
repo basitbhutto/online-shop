@@ -1,0 +1,30 @@
+@model Presentation.Areas.Admin.ViewModels.EditRolesViewModel
+@{
+    ViewData["Title"] = "Edit Roles";
+}
+<div class="mb-3"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to Users</a></div>
+<div class="sv-page-header">
+    <div>
+        <div class="sv-page-kicker">People</div>
+        <h1 class="mb-0">Edit roles</h1>
+        <p class="text-muted mb-0">@Model.FullName — @Model.Email</p>
+    </div>
+</div>
+<form asp-action="EditRoles" method="post" style="max-width:520px">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="UserId" />
+    <div class="sv-form-section">
+        @foreach (var role in Model.AllRoles)
+        {
+            <div class="form-check mb-2">
+                <input type="checkbox" name="SelectedRoles" value="@role" id="role_@(role.Replace(" ",""))"
+                       @(Model.CurrentRoles?.Contains(role) == true ? "checked" : "") class="form-check-input" />
+                <label for="role_@(role.Replace(" ",""))" class="form-check-label">@role</label>
+            </div>
+        }
+    </div>
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-sv">Save roles</button>
+        <a asp-action="Index" class="btn btn-outline-sv">Cancel</a>
+    </div>
+</form>

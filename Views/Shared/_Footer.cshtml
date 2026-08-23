@@ -1,0 +1,43 @@
+<footer class="sv-footer" id="contact">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                @{
+                    ViewData["BrandHref"] = Url.Action("Index", "Home");
+                    ViewData["BrandSize"] = "md";
+                    ViewData["BrandVariant"] = "dark";
+                }
+                <partial name="_BrandLogo" />
+                <p class="footer-tagline mb-0">@ShopVibeBrand.Tagline</p>
+            </div>
+            <div>
+                <h6>Shop</h6>
+                <ul>
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Shop" asp-action="Index">All products</a></li>
+                    <li><a asp-controller="Cart" asp-action="Index">Cart</a></li>
+                    <li><a asp-controller="Wishlist" asp-action="Index">Wishlist</a></li>
+                </ul>
+            </div>
+            <div>
+                <h6>Help</h6>
+                <ul>
+                    <li><a href="#contact">Contact us</a></li>
+                    <li><a asp-controller="Home" asp-action="Privacy">Privacy</a></li>
+                    <li><a asp-controller="Orders" asp-action="Index">Track order</a></li>
+                </ul>
+            </div>
+            <div>
+                <h6>Connect</h6>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="mailto:@ShopVibeBrand.SupportEmail" aria-label="Email"><i class="bi bi-envelope"></i></a>
+                </div>
+                <p class="small mt-3 mb-0" style="color:rgba(255,255,255,0.65)">@ShopVibeBrand.SupportEmail</p>
+            </div>
+        </div>
+        <div class="footer-copyright">&copy; @DateTime.UtcNow.Year @ShopVibeBrand.Name. All rights reserved.</div>
+    </div>
+</footer>

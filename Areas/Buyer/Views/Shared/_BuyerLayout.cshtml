@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @ShopVibeBrand.Name</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
+</head>
+<body data-user-authenticated="true" data-sv-success="@TempData["Success"]" data-sv-error="@TempData["Error"]">
+    <partial name="/Views/Shared/_Navbar.cshtml" />
+    <div class="d-flex flex-column flex-lg-row">
+        <aside class="buyer-sidebar p-3" style="width:240px">
+            <nav class="nav flex-column gap-1">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Dashboard"?"active":"")" asp-area="Buyer" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-grid me-2"></i>Dashboard</a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Orders"?"active":"")" asp-area="Buyer" asp-controller="Orders" asp-action="Index"><i class="bi bi-bag me-2"></i>My Orders</a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Profile"?"active":"")" asp-area="Buyer" asp-controller="Profile" asp-action="Index"><i class="bi bi-person me-2"></i>Profile</a>
+                <a class="nav-link" href="/"><i class="bi bi-shop me-2"></i>Continue Shopping</a>
+            </nav>
+        </aside>
+        <main class="flex-grow-1 p-4">
+            @RenderBody()
+        </main>
+    </div>
+    <partial name="/Views/Shared/_Footer.cshtml" />
+    <partial name="/Views/Shared/_ToastContainer.cshtml" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/shopvibe.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

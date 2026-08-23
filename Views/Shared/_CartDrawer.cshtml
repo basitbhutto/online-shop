@@ -1,0 +1,28 @@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartDrawer">
+    <div class="offcanvas-header sv-offcanvas-header text-white">
+        <h5 class="offcanvas-title">Your cart</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0 d-flex flex-column">
+        <div id="cartDrawerContent" class="p-3 flex-grow-1">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <p class="text-muted text-center">Loading cart...</p>
+            }
+            else
+            {
+                <p class="text-muted text-center mb-0">Add items now, then sign in to checkout.</p>
+            }
+        </div>
+        <div class="p-3 border-top" id="cartDrawerFooter">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-controller="Cart" asp-action="Index" class="btn btn-sv w-100">View cart &amp; checkout</a>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Content("~/Cart")" class="btn btn-sv w-100">Sign in to checkout</a>
+            }
+        </div>
+    </div>
+</div>

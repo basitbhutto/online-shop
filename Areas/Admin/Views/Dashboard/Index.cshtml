@@ -1,0 +1,143 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    var errorMsg = ViewBag.Error as string;
+    var stats = ViewBag.Stats as Application.Services.DashboardStatsDto;
+    var monthlySales = ViewBag.MonthlySales as IReadOnlyList<Application.Services.MonthlySalesDto> ?? new List<Application.Services.MonthlySalesDto>();
+    var productCount = ViewBag.ProductCount as int? ?? 0;
+    var userCount = ViewBag.UserCount as int? ?? 0;
+    var hasSales = monthlySales.Any(s => s.Revenue > 0 || s.OrderCount > 0);
+}
+
+<div class="sv-page-header">
+    <div>
+        <div class="sv-page-kicker">ShopVibe Admin</div>
+        <h1 class="mb-0">Dashboard</h1>
+        <p class="text-muted small mb-0">Overview of store performance</p>
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(errorMsg))
+{
+    <div class="alert alert-warning">@errorMsg</div>
+}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-4">
+        <div class="sv-stat">
+            <div class="sv-stat-icon"><i class="bi bi-bag-check"></i></div>
+            <div class="sv-stat-label">Total Orders</div>
+            <p class="sv-stat-value">@(stats?.TotalOrders ?? 0)</p>
+            <span class="sv-stat-accent"></span>
+        </div>
+    </div>
+    <div class="col-6 col-xl-4">
+        <div class="sv-stat sv-stat-revenue">
+            <div class="sv-stat-icon"><i class="bi bi-currency-dollar"></i></div>
+            <div class="sv-stat-label">Total Revenue</div>
+            <p class="sv-stat-value">Rs @((stats?.TotalRevenue ?? 0).ToString("N0"))</p>
+            <span class="sv-stat-accent"></span>
+        </div>
+    </div>
+    <div class="col-6 col-xl-4">
+        <div class="sv-stat">
+            <div class="sv-stat-icon"><i class="bi bi-box-seam"></i></div>
+            <div class="sv-stat-label">Products</div>
+            <p class="sv-stat-value">@productCount</p>
+            <span class="sv-stat-accent"></span>
+        </div>
+    </div>
+    <div class="col-6 col-xl-4">
+        <div class="sv-stat">
+            <div class="sv-stat-icon"><i class="bi bi-people"></i></div>
+            <div class="sv-stat-label">Users</div>
+            <p class="sv-stat-value">@userCount</p>
+            <span class="sv-stat-accent"></span>
+        </div>
+    </div>
+    <div class="col-6 col-xl-4">
+        <div class="sv-stat sv-stat-profit">
+            <div class="sv-stat-icon"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="sv-stat-label">Net Profit</div>
+            <p class="sv-stat-value">Rs @((stats?.NetProfit ?? 0).ToString("N0"))</p>
+            <span class="sv-stat-accent"></span>
+        </div>
+    </div>
+    <div class="col-6 col-xl-4">
+        <div class="sv-stat">
+            <div class="sv-stat-icon"><i class="bi bi-receipt"></i></div>
+            <div class="sv-stat-label">Purchase Cost</div>
+            <p class="sv-stat-value">Rs @((stats?.TotalPurchaseCost ?? 0).ToString("N0"))</p>
+            <span class="sv-stat-accent"></span>
+        </div>
+    </div>
+</div>
+<div class="sv-card">
+    <div class="p-4 pb-0 d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Monthly Sales</h2>
+    </div>
+    <div class="p-4">
+        @if (!hasSales)
+        {
+            <div class="sv-chart-empty" id="monthlySalesEmpty">
+                <i class="bi bi-bar-chart"></i>
+                <h3 class="h5">No sales data available yet</h3>
+                <p class="mb-0">Revenue will appear here after customers place orders.</p>
+            </div>
+        }
+        else
+        {
+            <canvas id="monthlySalesChart" height="90"></canvas>
+        }
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function() {
+    var ctx = document.getElementById('monthlySalesChart');
+    if (!ctx || typeof Chart === 'undefined') return;
+    var data = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(monthlySales));
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.map(function(d) { return months[(d.month || d.Month || 1) - 1]; }),
+            datasets: [
+                {
+                    label: 'Revenue (Rs)',
+                    data: data.map(function(d) { return d.revenue || d.Revenue || 0; }),
+                    backgroundColor: 'rgba(18, 209, 176, 0.75)',
+                    borderRadius: 8,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Orders',
+                    data: data.map(function(d) { return d.orderCount || d.OrderCount || 0; }),
+                    type: 'line',
+                    borderColor: '#05192D',
+                    backgroundColor: 'rgba(5, 25, 45, 0.12)',
+                    tension: 0.3,
+                    yAxisID: 'y1'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            if (ctx.dataset.yAxisID === 'y') return 'Revenue: Rs ' + Number(ctx.parsed.y).toLocaleString();
+                            return 'Orders: ' + ctx.parsed.y;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { callback: function(v) { return 'Rs ' + Number(v).toLocaleString(); } } },
+                y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { precision: 0 } }
+            }
+        }
+    });
+})();
+</script>
+}

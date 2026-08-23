@@ -1,0 +1,60 @@
+@model Presentation.Areas.Buyer.ViewModels.BuyerDashboardViewModel
+@{
+    ViewData["Title"] = "My Account";
+}
+<div class="sv-page-header">
+    <div>
+        <div class="sv-page-kicker">Account</div>
+        <h1 class="mb-0">Welcome, @Model.FullName</h1>
+    </div>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="sv-stat">
+            <div class="sv-stat-icon"><i class="bi bi-bag-check"></i></div>
+            <div class="sv-stat-label">Total orders</div>
+            <p class="sv-stat-value">@Model.TotalOrders</p>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="sv-stat">
+            <div class="sv-stat-icon"><i class="bi bi-envelope"></i></div>
+            <div class="sv-stat-label">Email</div>
+            <p class="sv-stat-value" style="font-size:1.1rem">@Model.Email</p>
+        </div>
+    </div>
+</div>
+<div class="sv-card">
+    <div class="p-4 pb-0"><h2 class="h5 mb-0">Recent orders</h2></div>
+    <div class="p-0">
+        @if (Model.RecentOrders.Any())
+        {
+            <div class="sv-table-wrap">
+                <table class="table sv-table mb-0">
+                    <thead><tr><th>Order</th><th>Status</th><th>Total</th><th>Date</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var o in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td>#@o.Id</td>
+                                <td><span class="badge bg-secondary">@o.StatusText</span></td>
+                                <td>Rs @o.TotalAmount.ToString("N0")</td>
+                                <td>@o.CreatedDate.ToString("dd MMM yyyy")</td>
+                                <td><a asp-area="Buyer" asp-controller="Orders" asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-outline-sv">View</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="sv-empty">
+                <i class="bi bi-bag"></i>
+                <h3>No orders yet</h3>
+                <p>Start shopping to see your orders here.</p>
+                <a href="/" class="btn btn-sv">Browse shop</a>
+            </div>
+        }
+    </div>
+</div>

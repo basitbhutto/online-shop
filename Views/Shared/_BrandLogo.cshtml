@@ -1,0 +1,28 @@
+@{
+    var href = ViewData["BrandHref"] as string;
+    var size = ViewData["BrandSize"] as string ?? "md";
+    var variant = ViewData["BrandVariant"] as string ?? "light";
+    var isDark = string.Equals(variant, "dark", StringComparison.OrdinalIgnoreCase);
+    var logoSrc = isDark ? "~/images/logo-icon.svg" : ShopVibeBrand.LogoPath;
+    var brandClass = $"sv-brand sv-brand-{size} sv-brand-{(isDark ? "dark" : "light")}";
+}
+@if (!string.IsNullOrEmpty(href))
+{
+    <a class="@brandClass" href="@href" aria-label="ShopVibe">
+        <img src="@Url.Content(logoSrc)" alt="" class="sv-logo-img@(isDark ? " sv-logo-icon" : "")" />
+        @if (isDark)
+        {
+            <span class="sv-wordmark sv-wordmark-on-dark">Shop<span>Vibe</span></span>
+        }
+    </a>
+}
+else
+{
+    <span class="@brandClass">
+        <img src="@Url.Content(logoSrc)" alt="" class="sv-logo-img@(isDark ? " sv-logo-icon" : "")" />
+        @if (isDark)
+        {
+            <span class="sv-wordmark sv-wordmark-on-dark">Shop<span>Vibe</span></span>
+        }
+    </span>
+}

@@ -1,0 +1,16 @@
+html {
+  font-size: 15px;
+  position: relative;
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+@media (min-width: 768px) {
+  html { font-size: 16px; }
+}
+
+body { margin-bottom: 0; }
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(18, 209, 176, 0.25);
+}

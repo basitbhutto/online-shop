@@ -1,0 +1,15 @@
+@model Domain.Entities.Order
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+<div class="container py-5">
+    <div class="sv-card text-center p-5" style="max-width:560px;margin:0 auto;">
+        <i class="bi bi-check-circle-fill" style="font-size:3rem;color:var(--sv-success)"></i>
+        <h1 class="h3 mt-3">Thank you</h1>
+        <p class="text-muted">Your ShopVibe order has been placed successfully.</p>
+        <p class="fw-semibold mb-1">Order #@Model.Id</p>
+        <p class="text-muted">Total: Rs @Model.TotalAmount.ToString("N0")</p>
+        <p>You can track it from <a asp-controller="Orders" asp-action="Index">My Orders</a>.</p>
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-sv">Continue shopping</a>
+    </div>
+</div>

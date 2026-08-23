@@ -1,0 +1,15 @@
+@model Domain.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Profile";
+}
+<div class="sv-page-header">
+    <div>
+        <div class="sv-page-kicker">Account</div>
+        <h1 class="mb-0">Profile</h1>
+    </div>
+</div>
+<div class="sv-form-section" style="max-width:520px">
+    <p><strong>Full name</strong><br />@(Model.FullName ?? "—")</p>
+    <p><strong>Email</strong><br />@Model.Email</p>
+    <p class="mb-0"><strong>Member since</strong><br />@Model.CreatedAt.ToString("dd MMM yyyy")</p>
+</div>

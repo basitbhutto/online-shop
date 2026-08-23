@@ -1,0 +1,41 @@
+@model List<Presentation.Areas.Buyer.ViewModels.OrderSummaryDto>
+@{
+    ViewData["Title"] = "My Orders";
+}
+<div class="sv-page-header">
+    <div>
+        <div class="sv-page-kicker">Account</div>
+        <h1 class="mb-0">My orders</h1>
+    </div>
+</div>
+<div class="sv-card">
+    @if (Model.Any())
+    {
+        <div class="sv-table-wrap">
+            <table class="table sv-table mb-0">
+                <thead><tr><th>Order</th><th>Status</th><th>Total</th><th>Date</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td>#@o.Id</td>
+                            <td><span class="badge bg-secondary">@o.StatusText</span></td>
+                            <td>Rs @o.TotalAmount.ToString("N0")</td>
+                            <td>@o.CreatedDate.ToString("dd MMM yyyy")</td>
+                            <td><a asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-outline-sv">View</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="sv-empty">
+            <i class="bi bi-bag"></i>
+            <h3>No orders yet</h3>
+            <p>Orders will appear here after you checkout.</p>
+            <a href="/" class="btn btn-sv">Start shopping</a>
+        </div>
+    }
+</div>

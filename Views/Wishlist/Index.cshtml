@@ -1,0 +1,59 @@
+@model List<Presentation.ViewModels.Shop.ProductCardViewModel>
+@{
+    ViewData["Title"] = "Wishlist";
+}
+<div class="container py-4">
+    <div class="sv-page-header"><div><div class="sv-page-kicker">ShopVibe</div><h1 class="mb-0">Wishlist</h1></div></div>
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var p in Model)
+            {
+                <div class="col-12 col-sm-6 col-md-4 col-xl-3 wishlist-card" data-product-id="@p.Id">
+                    <div class="card product-card h-100 border-0">
+                        <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="position-relative d-block">
+                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 wishlist-btn-remove" data-product-id="@p.Id" title="Remove"><i class="bi bi-heart-fill"></i></button>
+                            <img src="@(p.MainImageUrl ?? "/images/placeholder.svg")" class="card-img-top product-card-img" alt="@p.Name" onerror="this.src='/images/placeholder.svg'"/>
+                        </a>
+                        <div class="card-body product-card-body">
+                            <h6 class="card-title">@p.Name</h6>
+                            <p class="mb-3"><span class="product-price">Rs @p.DisplayPrice.ToString("N0")</span></p>
+                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="btn btn-sv btn-sm w-100">View</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="sv-empty sv-card">
+            <i class="bi bi-heart"></i>
+            <h3>Your wishlist is empty</h3>
+            <p>Save products you like and find them here later.</p>
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-sv">Browse products</a>
+        </div>
+    }
+</div>
+@section Scripts {
+<script>
+$(function() {
+    $('.wishlist-btn-remove').on('click', function(e) {
+        e.preventDefault();
+        var productId = this.getAttribute('data-product-id');
+        var card = $(this).closest('.wishlist-card');
+        fetch('/api/wishlist/' + productId, { method: 'DELETE', credentials: 'include' })
+            .then(function(r) {
+                if (r.status === 401) { window.location.href = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname); return null; }
+                return r.json();
+            })
+            .then(function(d) {
+                if (!d) return;
+                card.fadeOut(200, function() { $(this).remove(); });
+                if (typeof updateWishlistCount === 'function') updateWishlistCount();
+                if (window.ShopVibe) ShopVibe.toast('Removed from wishlist', 'success');
+            });
+    });
+});
+</script>
+}
